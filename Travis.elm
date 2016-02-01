@@ -1,0 +1,32 @@
+module Travis where
+
+import Json.Decode exposing (..)
+
+type alias BranchStatus = {
+  branches : List BranchBuild,
+  commits : List Commit
+}
+
+decodeBranchStatus: Decoder BranchStatus
+decodeBranchStatus = object2 BranchStatus ("branches" := (list decodeBranchBuild)) ("commits" := (list decodeCommit))
+
+type alias BranchBuild = {
+  id : Int,
+  commitId : Int,
+  state: String,
+  number: String
+}
+
+decodeBranchBuild: Decoder BranchBuild
+decodeBranchBuild = object4 BranchBuild ("id" := int) ("commit_id" := int) ("state" := string) ("number" := string)
+
+type alias Commit = {
+  id: Int,
+  branch: String,
+  committerName: String,
+  committerEmail: String,
+  message: String
+}
+
+decodeCommit: Decoder Commit
+decodeCommit = object5 Commit ("id" := int) ("branch" := string) ("committer_name" := string) ("committer_email" := string) ("message" := string)
