@@ -1,3 +1,5 @@
+module RadiatorApp where
+
 import StartApp
 import Effects exposing (Never, Effects)
 import Task exposing (Task)
@@ -5,7 +7,7 @@ import Time exposing (..)
 import Json.Decode exposing (..)
 import Http
 import Html exposing (Html, ul, li, text, div)
-import Html.Attributes exposing (style)
+import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Travis
 import Debug
@@ -59,13 +61,20 @@ combineAsBuildStatus { state } { branch } = { state = state, branch = branch }
 
 refreshBuilds : String -> Effects Action 
 refreshBuilds repositorySlug =
-  Http.get Travis.decodeBranchStatus ("https://api.travis-ci.org/repos/" ++ repositorySlug ++ "/branches")
-    |> Task.toMaybe
+  Travis.getBranchBuildStatus repositorySlug
     |> Task.map NewBuildStatus
     |> Effects.task
 
 view address model = 
-  ul [(style [("display", "table")])] (buildListing model.buildStatus)
+  ul [(class "branch-list")] (buildListing model.buildStatus)
 
 buildListing: List BuildStatus -> List Html
-buildListing statuses = List.map (\s -> li [style [("display", "table-row")]] [ div [ style [("display", "table-cell")]] [(text ("Branch: " ++ s.branch ++ ", status: " ++ s.state))]] ) statuses
+buildListing statuses = List.take 5 statuses |> List.map asListItem
+
+asListItem: BuildStatus -> Html
+asListItem s = li [class ("branch " ++ s.state)] (branchElems s) 
+
+branchElems: BuildStatus -> List Html
+branchElems { branch } = [
+    (Html.span [class "branch-name"] [text branch])
+  ]

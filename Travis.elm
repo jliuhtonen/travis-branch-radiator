@@ -1,6 +1,8 @@
 module Travis where
 
 import Json.Decode exposing (..)
+import Http
+import Task exposing (Task)
 
 type alias BranchStatus = {
   branches : List BranchBuild,
@@ -30,3 +32,20 @@ type alias Commit = {
 
 decodeCommit: Decoder Commit
 decodeCommit = object5 Commit ("id" := int) ("branch" := string) ("committer_name" := string) ("committer_email" := string) ("message" := string)
+
+baseUrl : String
+baseUrl = "https://api.travis-ci.org/"
+
+getBranchBuildStatus : String -> Task never (Maybe BranchStatus)
+getBranchBuildStatus repositorySlug =
+  travisApiGet decodeBranchStatus (baseUrl ++ "/repos/" ++ repositorySlug ++ "/branches")
+    |> Task.toMaybe
+
+travisApiGet : Decoder a -> String -> Task Http.Error a
+travisApiGet decoder url =
+  let request =
+    { verb = "GET", headers = travisHeaders, url = url, body = Http.empty }
+  in Http.send Http.defaultSettings request |> Http.fromJson decoder
+
+travisHeaders : List (String, String)
+travisHeaders = [("Accept", "application/vnd.travis-ci.2+json")]

@@ -1,0 +1,2 @@
+#!/usr/bin/env sh
+elm-make Main.elm --output radiator.js

@@ -1,0 +1,73 @@
+<html>
+
+  <head>
+    <title>Travis Branch radiator</title>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css' />
+    <style type="text/css">
+      ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .branch-list {
+        position: fixed;
+        top: 0; right: 0; bottom: 0; left: 0;
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        justify-content: center;
+        align-content: space-around;
+      }
+
+      .branch {
+        flex: 1 1 auto;
+        margin: auto;
+        background: lightgreen;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .branch:not(:first-child) {
+        border-top: 2px solid #000000;
+      }
+
+      .branch-name {
+        font-family: 'Open Sans', sans-serif;
+        font-weight: 600;
+        font-size: 5vw;
+        text-align:center;
+      }
+
+      .created {
+        background-color: blue;
+      }
+
+      .passed {
+        background-color: lightgreen;
+      }
+
+      .started {
+        background-color: lightblue;
+      }
+
+      .errored {
+        background-color: red;
+      }
+
+    </style>  
+    <script type="text/javascript" src="radiator.js"></script>
+  </head>
+
+  <body>
+    <div id="app"></div>
+  </body>
+
+  <script type="text/javascript">
+    var appElem = document.getElementById('app');
+    Elm.embed(Elm.RadiatorApp, appElem);
+    </script>
+
+  </html>
