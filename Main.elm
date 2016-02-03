@@ -1,12 +1,11 @@
 module RadiatorApp where
-
 import StartApp
 import Effects exposing (Never, Effects)
 import Task exposing (Task)
 import Time exposing (..)
 import Json.Decode exposing (..)
 import Http
-import Html exposing (Html, ul, li, text, div)
+import Html exposing (Html)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
 import Travis
@@ -27,9 +26,11 @@ port tasks = app.tasks
 clock : Signal Action
 clock = Signal.map (\_ -> RefreshBuilds) (every (30 * second))
 
-model = Model []
+model = Model Config Nothing []
 
 type alias Model = {
+  mode: AppMode,
+  apiKey: Maybe String,
   buildStatus : List BuildStatus
 }
 
@@ -37,6 +38,8 @@ type alias BuildStatus = {
   branch : String,
   state : String
 }
+
+type AppMode = Monitoring | Config
 
 update : Action -> Model -> (Model, Effects Action)
 update action model =
@@ -63,16 +66,19 @@ refreshBuilds repositorySlug =
     |> Task.map NewBuildStatus
     |> Effects.task
 
-view address model = 
-  ul [(class "branch-list")] (buildListing model.buildStatus)
+view address model =
+  Html.div [] [
+    Html.button [(class "config-button")] [],
+    Html.ul [(class "branch-list")] (buildListing model.buildStatus)
+    ] 
 
 buildListing: List BuildStatus -> List Html
 buildListing statuses = List.take 5 statuses |> List.map asListItem
 
 asListItem: BuildStatus -> Html
-asListItem s = li [class ("branch " ++ s.state)] (branchElems s) 
+asListItem s = Html.li [class ("branch " ++ s.state)] (branchElems s) 
 
 branchElems: BuildStatus -> List Html
 branchElems { branch } = [
-    (Html.span [class "branch-name"] [text branch])
+    (Html.span [class "branch-name"] [Html.text branch])
   ]

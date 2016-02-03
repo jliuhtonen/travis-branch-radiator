@@ -11067,16 +11067,23 @@ Elm.RadiatorApp.make = function (_elm) {
    };
    var asListItem = function (s) {    return A2($Html.li,_U.list([$Html$Attributes.$class(A2($Basics._op["++"],"branch ",s.state))]),branchElems(s));};
    var buildListing = function (statuses) {    return A2($List.map,asListItem,A2($List.take,5,statuses));};
-   var view = F2(function (address,model) {    return A2($Html.ul,_U.list([$Html$Attributes.$class("branch-list")]),buildListing(model.buildStatus));});
+   var view = F2(function (address,model) {
+      return A2($Html.div,
+      _U.list([]),
+      _U.list([A2($Html.button,_U.list([$Html$Attributes.$class("config-button")]),_U.list([]))
+              ,A2($Html.ul,_U.list([$Html$Attributes.$class("branch-list")]),buildListing(model.buildStatus))]));
+   });
    var combineAsBuildStatus = F2(function (_p3,_p2) {    var _p4 = _p3;var _p5 = _p2;return {state: _p4.state,branch: _p5.branch};});
    var toBuildStatusList = function (_p6) {    var _p7 = _p6;return A3($List.map2,combineAsBuildStatus,_p7.branches,_p7.commits);};
    var refreshModelBuildState = F2(function (updatedBranchStatus,model) {
       var updatedBuildStatus = toBuildStatusList(updatedBranchStatus);
       return _U.update(model,{buildStatus: A2($Debug.log,"build status",updatedBuildStatus)});
    });
+   var Config = {ctor: "Config"};
+   var Monitoring = {ctor: "Monitoring"};
    var BuildStatus = F2(function (a,b) {    return {branch: a,state: b};});
-   var Model = function (a) {    return {buildStatus: a};};
-   var model = Model(_U.list([]));
+   var Model = F3(function (a,b,c) {    return {mode: a,apiKey: b,buildStatus: c};});
+   var model = A3(Model,Config,$Maybe.Nothing,_U.list([]));
    var NewBuildStatus = function (a) {    return {ctor: "NewBuildStatus",_0: a};};
    var refreshBuilds = function (repositorySlug) {    return $Effects.task(A2($Task.map,NewBuildStatus,$Travis.getBranchBuildStatus(repositorySlug)));};
    var RefreshBuilds = {ctor: "RefreshBuilds"};
@@ -11107,6 +11114,8 @@ Elm.RadiatorApp.make = function (_elm) {
                                     ,model: model
                                     ,Model: Model
                                     ,BuildStatus: BuildStatus
+                                    ,Monitoring: Monitoring
+                                    ,Config: Config
                                     ,update: update
                                     ,refreshModelBuildState: refreshModelBuildState
                                     ,toBuildStatusList: toBuildStatusList
