@@ -12,8 +12,6 @@ import Html.Events exposing (onClick)
 import Travis
 import Debug
 
--- statuses: failed, errored, passed, created(?)
-
 defaultRepository = "elm-lang/elm-compiler"
 
 type Action = RefreshBuilds | NewBuildStatus (Maybe Travis.BranchStatus)
