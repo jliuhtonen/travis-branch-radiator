@@ -11061,41 +11061,55 @@ Elm.RadiatorApp.make = function (_elm) {
    $Time = Elm.Time.make(_elm),
    $Travis = Elm.Travis.make(_elm);
    var _op = {};
-   var branchElems = function (_p0) {
+   var configPanel = F2(function (_p0,actionAddress) {
       var _p1 = _p0;
-      return _U.list([A2($Html.span,_U.list([$Html$Attributes.$class("branch-name")]),_U.list([$Html.text(_p1.branch)]))]);
+      var apiKeyValue = A2($Maybe.withDefault,"",_p1.apiKey);
+      return _U.list([A2($Html.div,
+      _U.list([$Html$Attributes.$class("config-panel")]),
+      _U.list([A2($Html.label,_U.list([$Html$Attributes.$for("slug-field")]),_U.list([$Html.text("Repository slug:")]))
+              ,A2($Html.input,_U.list([$Html$Attributes.id("repository-field"),$Html$Attributes.value(_p1.repository)]),_U.list([]))
+              ,A2($Html.label,_U.list([$Html$Attributes.$for("api-key-field")]),_U.list([$Html.text("Private Travis API key:")]))
+              ,A2($Html.input,_U.list([$Html$Attributes.id("api-key-field"),$Html$Attributes.value(apiKeyValue)]),_U.list([]))
+              ,A2($Html.button,_U.list([]),_U.list([$Html.text("Save")]))]))]);
+   });
+   var branchElems = function (_p2) {
+      var _p3 = _p2;
+      return _U.list([A2($Html.span,_U.list([$Html$Attributes.$class("branch-name")]),_U.list([$Html.text(_p3.branch)]))]);
    };
    var asListItem = function (s) {    return A2($Html.li,_U.list([$Html$Attributes.$class(A2($Basics._op["++"],"branch ",s.state))]),branchElems(s));};
    var buildListing = function (statuses) {    return A2($List.map,asListItem,A2($List.take,5,statuses));};
-   var view = F2(function (address,model) {
-      return A2($Html.div,
-      _U.list([]),
-      _U.list([A2($Html.button,_U.list([$Html$Attributes.$class("config-button")]),_U.list([]))
-              ,A2($Html.ul,_U.list([$Html$Attributes.$class("branch-list")]),buildListing(model.buildStatus))]));
-   });
-   var combineAsBuildStatus = F2(function (_p3,_p2) {    var _p4 = _p3;var _p5 = _p2;return {state: _p4.state,branch: _p5.branch};});
-   var toBuildStatusList = function (_p6) {    var _p7 = _p6;return A3($List.map2,combineAsBuildStatus,_p7.branches,_p7.commits);};
+   var combineAsBuildStatus = F2(function (_p5,_p4) {    var _p6 = _p5;var _p7 = _p4;return {state: _p6.state,branch: _p7.branch};});
+   var toBuildStatusList = function (_p8) {    var _p9 = _p8;return A3($List.map2,combineAsBuildStatus,_p9.branches,_p9.commits);};
    var refreshModelBuildState = F2(function (updatedBranchStatus,model) {
       var updatedBuildStatus = toBuildStatusList(updatedBranchStatus);
       return _U.update(model,{buildStatus: A2($Debug.log,"build status",updatedBuildStatus)});
    });
    var Config = {ctor: "Config"};
+   var view = F2(function (actionAddress,model) {
+      var configMarkup = _U.eq(model.mode,Config) ? A2(configPanel,model.configuration,actionAddress) : _U.list([]);
+      return A2($Html.div,
+      _U.list([]),
+      _U.list([A2($Html.button,_U.list([$Html$Attributes.$class("config-button")]),_U.list([]))
+              ,A2($Html.div,_U.list([]),configMarkup)
+              ,A2($Html.ul,_U.list([$Html$Attributes.$class("branch-list")]),buildListing(model.buildStatus))]));
+   });
    var Monitoring = {ctor: "Monitoring"};
    var BuildStatus = F2(function (a,b) {    return {branch: a,state: b};});
-   var Model = F3(function (a,b,c) {    return {mode: a,apiKey: b,buildStatus: c};});
-   var model = A3(Model,Config,$Maybe.Nothing,_U.list([]));
+   var Configuration = F2(function (a,b) {    return {apiKey: a,repository: b};});
+   var Model = F3(function (a,b,c) {    return {mode: a,configuration: b,buildStatus: c};});
    var NewBuildStatus = function (a) {    return {ctor: "NewBuildStatus",_0: a};};
    var refreshBuilds = function (repositorySlug) {    return $Effects.task(A2($Task.map,NewBuildStatus,$Travis.getBranchBuildStatus(repositorySlug)));};
    var RefreshBuilds = {ctor: "RefreshBuilds"};
-   var clock = A2($Signal.map,function (_p8) {    return RefreshBuilds;},$Time.every(30 * $Time.second));
+   var clock = A2($Signal.map,function (_p10) {    return RefreshBuilds;},$Time.every(30 * $Time.second));
    var defaultRepository = "elm-lang/elm-compiler";
+   var model = A3(Model,Config,{apiKey: $Maybe.Nothing,repository: defaultRepository},_U.list([]));
    var update = F2(function (action,model) {
-      var _p9 = action;
-      if (_p9.ctor === "RefreshBuilds") {
+      var _p11 = action;
+      if (_p11.ctor === "RefreshBuilds") {
             return {ctor: "_Tuple2",_0: model,_1: refreshBuilds(defaultRepository)};
          } else {
-            if (_p9._0.ctor === "Just") {
-                  return {ctor: "_Tuple2",_0: A2(refreshModelBuildState,_p9._0._0,model),_1: $Effects.none};
+            if (_p11._0.ctor === "Just") {
+                  return {ctor: "_Tuple2",_0: A2(refreshModelBuildState,_p11._0._0,model),_1: $Effects.none};
                } else {
                   return {ctor: "_Tuple2",_0: model,_1: $Effects.none};
                }
@@ -11113,6 +11127,7 @@ Elm.RadiatorApp.make = function (_elm) {
                                     ,clock: clock
                                     ,model: model
                                     ,Model: Model
+                                    ,Configuration: Configuration
                                     ,BuildStatus: BuildStatus
                                     ,Monitoring: Monitoring
                                     ,Config: Config
@@ -11124,5 +11139,6 @@ Elm.RadiatorApp.make = function (_elm) {
                                     ,view: view
                                     ,buildListing: buildListing
                                     ,asListItem: asListItem
-                                    ,branchElems: branchElems};
+                                    ,branchElems: branchElems
+                                    ,configPanel: configPanel};
 };

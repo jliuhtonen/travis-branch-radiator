@@ -3,10 +3,10 @@ import StartApp
 import Effects exposing (Never, Effects)
 import Task exposing (Task)
 import Time exposing (..)
-import Json.Decode exposing (..)
+import Json.Decode exposing (Decoder)
 import Http
 import Html exposing (Html)
-import Html.Attributes exposing (class)
+import Html.Attributes exposing (class, id, for, value)
 import Html.Events exposing (onClick)
 import Travis
 import Debug
@@ -26,12 +26,17 @@ port tasks = app.tasks
 clock : Signal Action
 clock = Signal.map (\_ -> RefreshBuilds) (every (30 * second))
 
-model = Model Config Nothing []
+model = Model Config { apiKey = Nothing, repository = defaultRepository } []
 
 type alias Model = {
   mode: AppMode,
-  apiKey: Maybe String,
+  configuration: Configuration,
   buildStatus : List BuildStatus
+}
+
+type alias Configuration = {
+  apiKey: Maybe String,
+  repository: String
 }
 
 type alias BuildStatus = {
@@ -66,11 +71,18 @@ refreshBuilds repositorySlug =
     |> Task.map NewBuildStatus
     |> Effects.task
 
-view address model =
-  Html.div [] [
-    Html.button [(class "config-button")] [],
-    Html.ul [(class "branch-list")] (buildListing model.buildStatus)
-    ] 
+view: Signal.Address Action -> Model -> Html
+view actionAddress model =
+  let
+    configMarkup = if model.mode == Config 
+                     then configPanel model.configuration actionAddress
+                     else []
+  in
+     Html.div [] [
+       Html.button [(class "config-button")] [],
+       Html.div [] configMarkup,
+       Html.ul [(class "branch-list")] (buildListing model.buildStatus)
+       ] 
 
 buildListing: List BuildStatus -> List Html
 buildListing statuses = List.take 5 statuses |> List.map asListItem
@@ -82,3 +94,16 @@ branchElems: BuildStatus -> List Html
 branchElems { branch } = [
     (Html.span [class "branch-name"] [Html.text branch])
   ]
+
+configPanel: Configuration -> Signal.Address Action -> List Html
+configPanel { repository, apiKey } actionAddress = 
+  let
+      apiKeyValue = Maybe.withDefault "" apiKey 
+  in 
+     [Html.div [class "config-panel"] [
+       Html.label [for "slug-field"] [Html.text "Repository slug:"],
+       Html.input [(id "repository-field"), (value repository)] [],
+       Html.label [for "api-key-field"] [Html.text "Private Travis API key:"],
+       Html.input [(id "api-key-field"), (value apiKeyValue)] [],
+       Html.button [] [ Html.text "Save" ]
+       ]]
