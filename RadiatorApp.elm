@@ -13,7 +13,7 @@ import Debug
 
 defaultRepository = "elm-lang/elm-compiler"
 
-type Action = RefreshBuilds | NewBuildStatus (Maybe Travis.BranchStatus) | FlipConfigMode
+type Action = RefreshBuilds | NewBuildStatus (Maybe Travis.BranchStatus) | FlipConfigMode | UpdateRepositoryField String | UpdateApiKeyField String | SaveConfiguration
 
 app = StartApp.start { init = (model, refreshBuilds defaultRepository), view = view, update = update, inputs = [clock] }
 
@@ -26,11 +26,13 @@ port tasks = app.tasks
 clock : Signal Action
 clock = Signal.map (\_ -> RefreshBuilds) (every (30 * second))
 
-model = Model Config { apiKey = Nothing, repository = defaultRepository } []
+initialConfig = { apiKey = Nothing, repository = defaultRepository }
+model = Model Config initialConfig initialConfig []
 
 type alias Model = {
   mode: AppMode,
   configuration: Configuration,
+  configViewModel: Configuration,
   buildStatus : List BuildStatus
 }
 
@@ -49,10 +51,19 @@ type AppMode = Monitoring | Config
 update : Action -> Model -> (Model, Effects Action)
 update action model =
   case action of
-     RefreshBuilds -> (model, (refreshBuilds defaultRepository))
+     RefreshBuilds -> (model, (refreshBuilds model.configuration.repository))
      NewBuildStatus (Just builds) -> ((refreshModelBuildState builds model), Effects.none)
      NewBuildStatus Nothing -> (model, Effects.none)
      FlipConfigMode -> ({ model | mode = (flipAppMode model.mode) }, Effects.none)
+     UpdateRepositoryField repo ->
+       let currentConfigView = model.configViewModel
+           configView = { currentConfigView | repository = repo }
+       in ({ model | configViewModel = configView }, Effects.none)
+     UpdateApiKeyField key ->
+       let currentConfigView = model.configViewModel
+           configView = { currentConfigView | apiKey = Just key }
+       in ({ model | configViewModel = configView }, Effects.none)
+     SaveConfiguration -> ({ model | configuration = model.configViewModel }, (refreshBuilds model.configViewModel.repository))
 
 refreshModelBuildState: Travis.BranchStatus -> Model -> Model 
 refreshModelBuildState updatedBranchStatus model =

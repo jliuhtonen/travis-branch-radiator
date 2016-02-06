@@ -11090,7 +11090,10 @@ Elm.RadiatorApp.make = function (_elm) {
    var flipAppMode = function (mode) {    var _p10 = mode;if (_p10.ctor === "Monitoring") {    return Config;} else {    return Monitoring;}};
    var BuildStatus = F2(function (a,b) {    return {branch: a,state: b};});
    var Configuration = F2(function (a,b) {    return {apiKey: a,repository: b};});
-   var Model = F3(function (a,b,c) {    return {mode: a,configuration: b,buildStatus: c};});
+   var Model = F4(function (a,b,c,d) {    return {mode: a,configuration: b,configViewModel: c,buildStatus: d};});
+   var SaveConfiguration = {ctor: "SaveConfiguration"};
+   var UpdateApiKeyField = function (a) {    return {ctor: "UpdateApiKeyField",_0: a};};
+   var UpdateRepositoryField = function (a) {    return {ctor: "UpdateRepositoryField",_0: a};};
    var FlipConfigMode = {ctor: "FlipConfigMode"};
    var view = F2(function (actionAddress,model) {
       var configMarkup = _U.eq(model.mode,Config) ? A2(configPanel,model.configuration,actionAddress) : _U.list([]);
@@ -11102,21 +11105,29 @@ Elm.RadiatorApp.make = function (_elm) {
    });
    var NewBuildStatus = function (a) {    return {ctor: "NewBuildStatus",_0: a};};
    var refreshBuilds = function (repositorySlug) {    return $Effects.task(A2($Task.map,NewBuildStatus,$Travis.getBranchBuildStatus(repositorySlug)));};
-   var RefreshBuilds = {ctor: "RefreshBuilds"};
-   var clock = A2($Signal.map,function (_p11) {    return RefreshBuilds;},$Time.every(30 * $Time.second));
-   var defaultRepository = "elm-lang/elm-compiler";
-   var model = A3(Model,Config,{apiKey: $Maybe.Nothing,repository: defaultRepository},_U.list([]));
    var update = F2(function (action,model) {
-      var _p12 = action;
-      switch (_p12.ctor)
-      {case "RefreshBuilds": return {ctor: "_Tuple2",_0: model,_1: refreshBuilds(defaultRepository)};
-         case "NewBuildStatus": if (_p12._0.ctor === "Just") {
-                 return {ctor: "_Tuple2",_0: A2(refreshModelBuildState,_p12._0._0,model),_1: $Effects.none};
+      var _p11 = action;
+      switch (_p11.ctor)
+      {case "RefreshBuilds": return {ctor: "_Tuple2",_0: model,_1: refreshBuilds(model.configuration.repository)};
+         case "NewBuildStatus": if (_p11._0.ctor === "Just") {
+                 return {ctor: "_Tuple2",_0: A2(refreshModelBuildState,_p11._0._0,model),_1: $Effects.none};
               } else {
                  return {ctor: "_Tuple2",_0: model,_1: $Effects.none};
               }
-         default: return {ctor: "_Tuple2",_0: _U.update(model,{mode: flipAppMode(model.mode)}),_1: $Effects.none};}
+         case "FlipConfigMode": return {ctor: "_Tuple2",_0: _U.update(model,{mode: flipAppMode(model.mode)}),_1: $Effects.none};
+         case "UpdateRepositoryField": var currentConfigView = model.configViewModel;
+           var configView = _U.update(currentConfigView,{repository: _p11._0});
+           return {ctor: "_Tuple2",_0: _U.update(model,{configViewModel: configView}),_1: $Effects.none};
+         case "UpdateApiKeyField": var currentConfigView = model.configViewModel;
+           var configView = _U.update(currentConfigView,{apiKey: $Maybe.Just(_p11._0)});
+           return {ctor: "_Tuple2",_0: _U.update(model,{configViewModel: configView}),_1: $Effects.none};
+         default: return {ctor: "_Tuple2",_0: _U.update(model,{configuration: model.configViewModel}),_1: refreshBuilds(model.configViewModel.repository)};}
    });
+   var RefreshBuilds = {ctor: "RefreshBuilds"};
+   var clock = A2($Signal.map,function (_p12) {    return RefreshBuilds;},$Time.every(30 * $Time.second));
+   var defaultRepository = "elm-lang/elm-compiler";
+   var initialConfig = {apiKey: $Maybe.Nothing,repository: defaultRepository};
+   var model = A4(Model,Config,initialConfig,initialConfig,_U.list([]));
    var app = $StartApp.start({init: {ctor: "_Tuple2",_0: model,_1: refreshBuilds(defaultRepository)},view: view,update: update,inputs: _U.list([clock])});
    var main = app.html;
    var tasks = Elm.Native.Task.make(_elm).performSignal("tasks",app.tasks);
@@ -11125,9 +11136,13 @@ Elm.RadiatorApp.make = function (_elm) {
                                     ,RefreshBuilds: RefreshBuilds
                                     ,NewBuildStatus: NewBuildStatus
                                     ,FlipConfigMode: FlipConfigMode
+                                    ,UpdateRepositoryField: UpdateRepositoryField
+                                    ,UpdateApiKeyField: UpdateApiKeyField
+                                    ,SaveConfiguration: SaveConfiguration
                                     ,app: app
                                     ,main: main
                                     ,clock: clock
+                                    ,initialConfig: initialConfig
                                     ,model: model
                                     ,Model: Model
                                     ,Configuration: Configuration
