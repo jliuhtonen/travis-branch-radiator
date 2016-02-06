@@ -1,2 +1,2 @@
 #!/usr/bin/env sh
-elm-make Main.elm --output dist/radiator.js
+elm-make RadiatorApp.elm --output dist/radiator.js
