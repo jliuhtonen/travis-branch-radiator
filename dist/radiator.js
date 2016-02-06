@@ -11052,6 +11052,7 @@ Elm.RadiatorApp.make = function (_elm) {
    $Effects = Elm.Effects.make(_elm),
    $Html = Elm.Html.make(_elm),
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $Html$Events = Elm.Html.Events.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
@@ -11085,35 +11086,36 @@ Elm.RadiatorApp.make = function (_elm) {
       return _U.update(model,{buildStatus: A2($Debug.log,"build status",updatedBuildStatus)});
    });
    var Config = {ctor: "Config"};
+   var Monitoring = {ctor: "Monitoring"};
+   var flipAppMode = function (mode) {    var _p10 = mode;if (_p10.ctor === "Monitoring") {    return Config;} else {    return Monitoring;}};
+   var BuildStatus = F2(function (a,b) {    return {branch: a,state: b};});
+   var Configuration = F2(function (a,b) {    return {apiKey: a,repository: b};});
+   var Model = F3(function (a,b,c) {    return {mode: a,configuration: b,buildStatus: c};});
+   var FlipConfigMode = {ctor: "FlipConfigMode"};
    var view = F2(function (actionAddress,model) {
       var configMarkup = _U.eq(model.mode,Config) ? A2(configPanel,model.configuration,actionAddress) : _U.list([]);
       return A2($Html.div,
       _U.list([]),
-      _U.list([A2($Html.button,_U.list([$Html$Attributes.$class("config-button")]),_U.list([]))
+      _U.list([A2($Html.button,_U.list([$Html$Attributes.$class("config-button"),A2($Html$Events.onClick,actionAddress,FlipConfigMode)]),_U.list([]))
               ,A2($Html.div,_U.list([]),configMarkup)
               ,A2($Html.ul,_U.list([$Html$Attributes.$class("branch-list")]),buildListing(model.buildStatus))]));
    });
-   var Monitoring = {ctor: "Monitoring"};
-   var BuildStatus = F2(function (a,b) {    return {branch: a,state: b};});
-   var Configuration = F2(function (a,b) {    return {apiKey: a,repository: b};});
-   var Model = F3(function (a,b,c) {    return {mode: a,configuration: b,buildStatus: c};});
    var NewBuildStatus = function (a) {    return {ctor: "NewBuildStatus",_0: a};};
    var refreshBuilds = function (repositorySlug) {    return $Effects.task(A2($Task.map,NewBuildStatus,$Travis.getBranchBuildStatus(repositorySlug)));};
    var RefreshBuilds = {ctor: "RefreshBuilds"};
-   var clock = A2($Signal.map,function (_p10) {    return RefreshBuilds;},$Time.every(30 * $Time.second));
+   var clock = A2($Signal.map,function (_p11) {    return RefreshBuilds;},$Time.every(30 * $Time.second));
    var defaultRepository = "elm-lang/elm-compiler";
    var model = A3(Model,Config,{apiKey: $Maybe.Nothing,repository: defaultRepository},_U.list([]));
    var update = F2(function (action,model) {
-      var _p11 = action;
-      if (_p11.ctor === "RefreshBuilds") {
-            return {ctor: "_Tuple2",_0: model,_1: refreshBuilds(defaultRepository)};
-         } else {
-            if (_p11._0.ctor === "Just") {
-                  return {ctor: "_Tuple2",_0: A2(refreshModelBuildState,_p11._0._0,model),_1: $Effects.none};
-               } else {
-                  return {ctor: "_Tuple2",_0: model,_1: $Effects.none};
-               }
-         }
+      var _p12 = action;
+      switch (_p12.ctor)
+      {case "RefreshBuilds": return {ctor: "_Tuple2",_0: model,_1: refreshBuilds(defaultRepository)};
+         case "NewBuildStatus": if (_p12._0.ctor === "Just") {
+                 return {ctor: "_Tuple2",_0: A2(refreshModelBuildState,_p12._0._0,model),_1: $Effects.none};
+              } else {
+                 return {ctor: "_Tuple2",_0: model,_1: $Effects.none};
+              }
+         default: return {ctor: "_Tuple2",_0: _U.update(model,{mode: flipAppMode(model.mode)}),_1: $Effects.none};}
    });
    var app = $StartApp.start({init: {ctor: "_Tuple2",_0: model,_1: refreshBuilds(defaultRepository)},view: view,update: update,inputs: _U.list([clock])});
    var main = app.html;
@@ -11122,6 +11124,7 @@ Elm.RadiatorApp.make = function (_elm) {
                                     ,defaultRepository: defaultRepository
                                     ,RefreshBuilds: RefreshBuilds
                                     ,NewBuildStatus: NewBuildStatus
+                                    ,FlipConfigMode: FlipConfigMode
                                     ,app: app
                                     ,main: main
                                     ,clock: clock
@@ -11136,6 +11139,7 @@ Elm.RadiatorApp.make = function (_elm) {
                                     ,toBuildStatusList: toBuildStatusList
                                     ,combineAsBuildStatus: combineAsBuildStatus
                                     ,refreshBuilds: refreshBuilds
+                                    ,flipAppMode: flipAppMode
                                     ,view: view
                                     ,buildListing: buildListing
                                     ,asListItem: asListItem

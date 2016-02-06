@@ -13,7 +13,7 @@ import Debug
 
 defaultRepository = "elm-lang/elm-compiler"
 
-type Action = RefreshBuilds | NewBuildStatus (Maybe Travis.BranchStatus)
+type Action = RefreshBuilds | NewBuildStatus (Maybe Travis.BranchStatus) | FlipConfigMode
 
 app = StartApp.start { init = (model, refreshBuilds defaultRepository), view = view, update = update, inputs = [clock] }
 
@@ -52,6 +52,7 @@ update action model =
      RefreshBuilds -> (model, (refreshBuilds defaultRepository))
      NewBuildStatus (Just builds) -> ((refreshModelBuildState builds model), Effects.none)
      NewBuildStatus Nothing -> (model, Effects.none)
+     FlipConfigMode -> ({ model | mode = (flipAppMode model.mode) }, Effects.none)
 
 refreshModelBuildState: Travis.BranchStatus -> Model -> Model 
 refreshModelBuildState updatedBranchStatus model =
@@ -71,6 +72,11 @@ refreshBuilds repositorySlug =
     |> Task.map NewBuildStatus
     |> Effects.task
 
+flipAppMode: AppMode -> AppMode
+flipAppMode mode =  case mode of 
+  Monitoring -> Config
+  Config -> Monitoring
+
 view: Signal.Address Action -> Model -> Html
 view actionAddress model =
   let
@@ -79,7 +85,7 @@ view actionAddress model =
                      else []
   in
      Html.div [] [
-       Html.button [(class "config-button")] [],
+       Html.button [(class "config-button"), (onClick actionAddress FlipConfigMode)] [],
        Html.div [] configMarkup,
        Html.ul [(class "branch-list")] (buildListing model.buildStatus)
        ] 
