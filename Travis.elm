@@ -33,19 +33,26 @@ type alias Commit = {
 decodeCommit: Decoder Commit
 decodeCommit = object5 Commit ("id" := int) ("branch" := string) ("committer_name" := string) ("committer_email" := string) ("message" := string)
 
-baseUrl : String
-baseUrl = "https://api.travis-ci.org/"
+baseUrl : Maybe String -> String
+baseUrl maybeKey = case maybeKey of
+  Just _  -> "https://api.travis-ci.com"
+  Nothing -> "https://api.travis-ci.org"
 
-getBranchBuildStatus : String -> Task never (Maybe BranchStatus)
-getBranchBuildStatus repositorySlug =
-  travisApiGet decodeBranchStatus (baseUrl ++ "/repos/" ++ repositorySlug ++ "/branches")
-    |> Task.toMaybe
+getBranchBuildStatus : Maybe String -> String -> Task never (Maybe BranchStatus)
+getBranchBuildStatus apiKey repositorySlug =
+  let url = (baseUrl apiKey) ++ "/repos/" ++ repositorySlug ++ "/branches"
+  in travisApiGet apiKey decodeBranchStatus url |> Task.toMaybe
 
-travisApiGet : Decoder a -> String -> Task Http.Error a
-travisApiGet decoder url =
+travisApiGet : Maybe String -> Decoder a -> String -> Task Http.Error a
+travisApiGet apiKey decoder url =
   let request =
-    { verb = "GET", headers = travisHeaders, url = url, body = Http.empty }
+    { verb = "GET", headers = travisHeaders apiKey, url = url, body = Http.empty }
   in Http.send Http.defaultSettings request |> Http.fromJson decoder
 
-travisHeaders : List (String, String)
-travisHeaders = [("Accept", "application/vnd.travis-ci.2+json")]
+travisHeaders : Maybe String -> List (String, String)
+travisHeaders apiKey = List.append [("Accept", "application/vnd.travis-ci.2+json")] (getAuthHeaders apiKey)
+
+getAuthHeaders: Maybe String -> List (String, String)
+getAuthHeaders maybeKey = case maybeKey of
+  Just apiKey -> [("Authorization", "token " ++ apiKey)]
+  Nothing  -> []
