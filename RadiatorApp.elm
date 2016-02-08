@@ -3,6 +3,7 @@ import StartApp
 import Effects exposing (Never, Effects)
 import Task exposing (Task)
 import Time exposing (..)
+import String
 import Json.Decode exposing (Decoder)
 import Http
 import Html exposing (Html)
@@ -15,7 +16,7 @@ defaultRepository = "elm-lang/elm-compiler"
 
 type Action = RefreshBuilds | NewBuildStatus (Maybe Travis.BranchStatus) | FlipConfigMode | UpdateRepositoryField String | UpdateApiKeyField String | SaveConfiguration
 
-app = StartApp.start { init = (model, refreshBuilds defaultRepository), view = view, update = update, inputs = [clock] }
+app = StartApp.start { init = (model, refreshBuilds initialConfig), view = view, update = update, inputs = [clock] }
 
 main : Signal Html
 main = app.html
@@ -51,7 +52,7 @@ type AppMode = Monitoring | Config
 update : Action -> Model -> (Model, Effects Action)
 update action model =
   case action of
-     RefreshBuilds -> (model, (refreshBuilds model.configuration.repository))
+     RefreshBuilds -> (model, (refreshBuilds model.configuration))
      NewBuildStatus (Just builds) -> ((refreshModelBuildState builds model), Effects.none)
      NewBuildStatus Nothing -> (model, Effects.none)
      FlipConfigMode -> ({ model | mode = (flipAppMode model.mode) }, Effects.none)
@@ -60,10 +61,13 @@ update action model =
            configView = { currentConfigView | repository = repo }
        in ({ model | configViewModel = configView }, Effects.none)
      UpdateApiKeyField key ->
-       let currentConfigView = model.configViewModel
-           configView = { currentConfigView | apiKey = Just key }
+       let keyModelValue = case String.trim key of
+             ""  -> Nothing
+             any -> Just any
+           currentConfigView = model.configViewModel
+           configView = { currentConfigView | apiKey = keyModelValue }
        in ({ model | configViewModel = configView }, Effects.none)
-     SaveConfiguration -> ({ model | configuration = model.configViewModel }, (refreshBuilds model.configViewModel.repository))
+     SaveConfiguration -> ({ model | configuration = model.configViewModel, mode = Monitoring }, (refreshBuilds model.configViewModel))
 
 refreshModelBuildState: Travis.BranchStatus -> Model -> Model 
 refreshModelBuildState updatedBranchStatus model =
@@ -77,9 +81,9 @@ toBuildStatusList {branches, commits} =
 combineAsBuildStatus: Travis.BranchBuild -> Travis.Commit -> BuildStatus
 combineAsBuildStatus { state } { branch } = { state = state, branch = branch }
 
-refreshBuilds : String -> Effects Action 
-refreshBuilds repositorySlug =
-  Travis.getBranchBuildStatus repositorySlug
+refreshBuilds : Configuration -> Effects Action 
+refreshBuilds config =
+  Travis.getBranchBuildStatus config.apiKey config.repository
     |> Task.map NewBuildStatus
     |> Effects.task
 
@@ -91,9 +95,9 @@ flipAppMode mode =  case mode of
 view: Signal.Address Action -> Model -> Html
 view actionAddress model =
   let
-    configMarkup = if model.mode == Config 
-                     then configPanel model.configuration actionAddress
-                     else []
+    configMarkup = case model.mode of
+                     Config -> configPanel model.configViewModel actionAddress 
+                     _ -> []
   in
      Html.div [] [
        Html.button [(class "config-button"), (onClick actionAddress FlipConfigMode)] [],
@@ -115,12 +119,12 @@ branchElems { branch } = [
 configPanel: Configuration -> Signal.Address Action -> List Html
 configPanel { repository, apiKey } actionAddress = 
   let
-      apiKeyValue = Maybe.withDefault "" apiKey 
+      apiKeyValue = Maybe.withDefault "" apiKey
   in 
      [Html.div [class "config-panel"] [
        Html.label [for "slug-field"] [Html.text "Repository slug:"],
-       Html.input [(id "repository-field"), (value repository)] [],
+       Html.input [(id "repository-field"), (value repository), (Html.Events.on "input" Html.Events.targetValue (Signal.message actionAddress << UpdateRepositoryField))] [],
        Html.label [for "api-key-field"] [Html.text "Private Travis API key:"],
-       Html.input [(id "api-key-field"), (value apiKeyValue)] [],
-       Html.button [] [ Html.text "Save" ]
+       Html.input [(id "api-key-field"), (value apiKeyValue), (Html.Events.on "input" Html.Events.targetValue (Signal.message actionAddress << UpdateApiKeyField))] [],
+       Html.button [onClick actionAddress SaveConfiguration] [ Html.text "Save" ]
        ]]
