@@ -14,7 +14,12 @@ import Debug
 
 defaultRepository = "elm-lang/elm-compiler"
 
-type Action = RefreshBuilds | NewBuildStatus (Maybe Travis.BranchStatus) | FlipConfigMode | UpdateRepositoryField String | UpdateApiKeyField String | SaveConfiguration
+type Action = RefreshBuilds 
+            | NewBuildStatus (Maybe Travis.BranchStatus) 
+            | FlipConfigMode 
+            | UpdateRepositoryField String 
+            | UpdateApiKeyField String 
+            | SaveConfiguration
 
 type alias Model = {
   mode: AppMode,
