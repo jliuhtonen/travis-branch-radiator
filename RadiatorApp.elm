@@ -16,20 +16,6 @@ defaultRepository = "elm-lang/elm-compiler"
 
 type Action = RefreshBuilds | NewBuildStatus (Maybe Travis.BranchStatus) | FlipConfigMode | UpdateRepositoryField String | UpdateApiKeyField String | SaveConfiguration
 
-app = StartApp.start { init = (model, refreshBuilds initialConfig), view = view, update = update, inputs = [clock] }
-
-main : Signal Html
-main = app.html
-
-port tasks : Signal (Task.Task Never ())
-port tasks = app.tasks
-
-clock : Signal Action
-clock = Signal.map (\_ -> RefreshBuilds) (every (30 * second))
-
-initialConfig = { apiKey = Nothing, repository = defaultRepository }
-model = Model Config initialConfig initialConfig []
-
 type alias Model = {
   mode: AppMode,
   configuration: Configuration,
@@ -48,6 +34,20 @@ type alias BuildStatus = {
 }
 
 type AppMode = Monitoring | Config
+
+app = StartApp.start { init = (model, refreshBuilds initialConfig), view = view, update = update, inputs = [clock] }
+
+main : Signal Html
+main = app.html
+
+port tasks : Signal (Task.Task Never ())
+port tasks = app.tasks
+
+clock : Signal Action
+clock = Signal.map (\_ -> RefreshBuilds) (every (30 * second))
+
+initialConfig = { apiKey = Nothing, repository = defaultRepository }
+model = Model Config initialConfig initialConfig []
 
 update : Action -> Model -> (Model, Effects Action)
 update action model =

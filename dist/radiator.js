@@ -11194,16 +11194,16 @@ Elm.RadiatorApp.make = function (_elm) {
                                     ,UpdateRepositoryField: UpdateRepositoryField
                                     ,UpdateApiKeyField: UpdateApiKeyField
                                     ,SaveConfiguration: SaveConfiguration
-                                    ,app: app
-                                    ,main: main
-                                    ,clock: clock
-                                    ,initialConfig: initialConfig
-                                    ,model: model
                                     ,Model: Model
                                     ,Configuration: Configuration
                                     ,BuildStatus: BuildStatus
                                     ,Monitoring: Monitoring
                                     ,Config: Config
+                                    ,app: app
+                                    ,main: main
+                                    ,clock: clock
+                                    ,initialConfig: initialConfig
+                                    ,model: model
                                     ,update: update
                                     ,refreshModelBuildState: refreshModelBuildState
                                     ,toBuildStatusList: toBuildStatusList
