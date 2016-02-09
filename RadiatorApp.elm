@@ -35,7 +35,7 @@ type alias BuildStatus = {
 
 type AppMode = Monitoring | Config
 
-app = StartApp.start { init = (model, refreshBuilds initialConfig), view = view, update = update, inputs = [clock] }
+app = StartApp.start { init = (model, refreshBuilds initialConfig), view = view, update = update, inputs = [timedUpdate] }
 
 main : Signal Html
 main = app.html
@@ -43,8 +43,8 @@ main = app.html
 port tasks : Signal (Task.Task Never ())
 port tasks = app.tasks
 
-clock : Signal Action
-clock = Signal.map (\_ -> RefreshBuilds) (every (30 * second))
+timedUpdate : Signal Action
+timedUpdate = Signal.map (\_ -> RefreshBuilds) (every (30 * second))
 
 initialConfig = { apiKey = Nothing, repository = defaultRepository }
 model = Model Config initialConfig initialConfig []
@@ -67,12 +67,13 @@ update action model =
            currentConfigView = model.configViewModel
            configView = { currentConfigView | apiKey = keyModelValue }
        in ({ model | configViewModel = configView }, Effects.none)
-     SaveConfiguration -> ({ model | configuration = model.configViewModel, mode = Monitoring }, (refreshBuilds model.configViewModel))
+     SaveConfiguration -> ({ model | configuration = model.configViewModel, 
+        mode = Monitoring }, (refreshBuilds model.configViewModel))
 
 refreshModelBuildState: Travis.BranchStatus -> Model -> Model 
 refreshModelBuildState updatedBranchStatus model =
   let updatedBuildStatus = toBuildStatusList updatedBranchStatus
-  in { model | buildStatus = (Debug.log "build status" updatedBuildStatus) }
+  in { model | buildStatus = updatedBuildStatus }
 
 toBuildStatusList: Travis.BranchStatus -> List BuildStatus
 toBuildStatusList {branches, commits} = 
@@ -82,27 +83,27 @@ combineAsBuildStatus: Travis.BranchBuild -> Travis.Commit -> BuildStatus
 combineAsBuildStatus { state } { branch } = { state = state, branch = branch }
 
 refreshBuilds : Configuration -> Effects Action 
-refreshBuilds config =
-  Travis.getBranchBuildStatus config.apiKey config.repository
+refreshBuilds { apiKey, repository } =
+  Travis.getBranchBuildStatus apiKey repository
     |> Task.map NewBuildStatus
     |> Effects.task
 
 flipAppMode: AppMode -> AppMode
-flipAppMode mode =  case mode of 
+flipAppMode mode = case mode of 
   Monitoring -> Config
   Config -> Monitoring
 
 view: Signal.Address Action -> Model -> Html
 view actionAddress model =
   let
-    configMarkup = case model.mode of
-                     Config -> configPanel model.configViewModel actionAddress 
-                     _ -> []
+     configMarkup = case model.mode of
+       Config -> configPanel model.configViewModel actionAddress 
+       _ -> []
   in
      Html.div [] [
-       Html.button [(class "config-button"), (onClick actionAddress FlipConfigMode)] [],
+       Html.button [class "config-button", onClick actionAddress FlipConfigMode] [],
        Html.div [] configMarkup,
-       Html.ul [(class "branch-list")] (buildListing model.buildStatus)
+       Html.ul [class "branch-list"] (buildListing model.buildStatus)
        ] 
 
 buildListing: List BuildStatus -> List Html
@@ -123,8 +124,8 @@ configPanel { repository, apiKey } actionAddress =
   in 
      [Html.div [class "config-panel"] [
        Html.label [for "slug-field"] [Html.text "Repository slug:"],
-       Html.input [(id "repository-field"), (value repository), (Html.Events.on "input" Html.Events.targetValue (Signal.message actionAddress << UpdateRepositoryField))] [],
+       Html.input [id "repository-field", value repository, Html.Events.on "input" Html.Events.targetValue (Signal.message actionAddress << UpdateRepositoryField)] [],
        Html.label [for "api-key-field"] [Html.text "Private Travis API key:"],
-       Html.input [(id "api-key-field"), (value apiKeyValue), (Html.Events.on "input" Html.Events.targetValue (Signal.message actionAddress << UpdateApiKeyField))] [],
+       Html.input [id "api-key-field", value apiKeyValue, Html.Events.on "input" Html.Events.targetValue (Signal.message actionAddress << UpdateApiKeyField)] [],
        Html.button [onClick actionAddress SaveConfiguration] [ Html.text "Save" ]
        ]]
