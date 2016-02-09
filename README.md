@@ -1,9 +1,13 @@
-# travis-branch-radiator
+# Travis branch radiator
 Travis branch build status radiator/dashboard.
 
-You can use the [hosted version on GitHub pages](http://jliuhtonen.github.io/travis-branch-radiator) or host it in your own environment. 
-Works with public or private Travis. Does not send your API key anywhere except the Travis API through HTTPS.
+* You can use the [hosted version](http://jliuhtonen.github.io/travis-branch-radiator) or host the static files yourself.
+* Works with public and private Travis
+* Does not send your API key anywhere except the Travis API through HTTPS.
+* Responsive layout with solarized colors
 
-Plz send PRs.
+Pull requests welcome.
 
-License is MIT.
+## License
+
+MIT
