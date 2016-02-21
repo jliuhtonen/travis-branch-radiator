@@ -11107,9 +11107,10 @@ Elm.RadiatorApp.make = function (_elm) {
       return _U.list([A2($Html.div,
       _U.list([$Html$Attributes.$class("config-panel")]),
       _U.list([A2($Html.label,_U.list([$Html$Attributes.$for("slug-field")]),_U.list([$Html.text("Repository slug:")]))
-              ,A2($Html.input,
+              ,A2($Html.textarea,
               _U.list([$Html$Attributes.id("repository-field")
                       ,$Html$Attributes.value(_p10.repository)
+                      ,$Html$Attributes.rows(5)
                       ,A3($Html$Events.on,
                       "input",
                       $Html$Events.targetValue,

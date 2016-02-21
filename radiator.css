@@ -97,13 +97,16 @@ ul {
   margin-top: 10px;
 }
 
-.config-panel input {
+.config-panel input, .config-panel textarea {
   background-color: #eee8d5;
   border-radius: 3px;
   clear: right;
   font-size: 15px;
-  height: 40px;
   width: 100%;
+}
+
+.config-panel input {
+  height: 40px;
 }
 
 .config-panel button {

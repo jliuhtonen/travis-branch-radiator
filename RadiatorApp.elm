@@ -7,7 +7,7 @@ import String
 import Json.Decode exposing (Decoder)
 import Http
 import Html exposing (Html)
-import Html.Attributes exposing (class, id, for, value)
+import Html.Attributes exposing (class, id, for, value, rows)
 import Html.Events exposing (onClick)
 import Travis
 import Debug
@@ -129,7 +129,7 @@ configPanel { repository, apiKey } actionAddress =
   in 
      [Html.div [class "config-panel"] [
        Html.label [for "slug-field"] [Html.text "Repository slug:"],
-       Html.input [id "repository-field", value repository, Html.Events.on "input" Html.Events.targetValue (Signal.message actionAddress << UpdateRepositoryField)] [],
+       Html.textarea [id "repository-field", value repository, rows 5, Html.Events.on "input" Html.Events.targetValue (Signal.message actionAddress << UpdateRepositoryField)] [],
        Html.label [for "api-key-field"] [Html.text "Private Travis API key:"],
        Html.input [id "api-key-field", value apiKeyValue, Html.Events.on "input" Html.Events.targetValue (Signal.message actionAddress << UpdateApiKeyField)] [],
        Html.button [onClick actionAddress SaveConfiguration] [ Html.text "Save" ]
