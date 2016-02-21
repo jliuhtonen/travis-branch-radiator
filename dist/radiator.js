@@ -11097,7 +11097,7 @@ Elm.RadiatorApp.make = function (_elm) {
    var flipAppMode = function (mode) {    var _p8 = mode;if (_p8.ctor === "Monitoring") {    return Config;} else {    return Monitoring;}};
    var BuildStatus = F2(function (a,b) {    return {branch: a,state: b};});
    var Configuration = F2(function (a,b) {    return {apiKey: a,repository: b};});
-   var Model = F4(function (a,b,c,d) {    return {mode: a,configuration: b,configViewModel: c,buildStatus: d};});
+   var Model = F4(function (a,b,c,d) {    return {mode: a,configuration: b,configPanel: c,buildStatus: d};});
    var SaveConfiguration = {ctor: "SaveConfiguration"};
    var UpdateApiKeyField = function (a) {    return {ctor: "UpdateApiKeyField",_0: a};};
    var UpdateRepositoryField = function (a) {    return {ctor: "UpdateRepositoryField",_0: a};};
@@ -11135,7 +11135,7 @@ Elm.RadiatorApp.make = function (_elm) {
       var configMarkup = function () {
          var _p13 = model.mode;
          if (_p13.ctor === "Config") {
-               return A2(configPanel,model.configViewModel,actionAddress);
+               return A2(configPanel,model.configPanel,actionAddress);
             } else {
                return _U.list([]);
             }
@@ -11161,10 +11161,10 @@ Elm.RadiatorApp.make = function (_elm) {
                  return {ctor: "_Tuple2",_0: model,_1: $Effects.none};
               }
          case "FlipConfigMode": return {ctor: "_Tuple2",_0: _U.update(model,{mode: flipAppMode(model.mode)}),_1: $Effects.none};
-         case "UpdateRepositoryField": var currentConfigView = model.configViewModel;
+         case "UpdateRepositoryField": var currentConfigView = model.configPanel;
            var configView = _U.update(currentConfigView,{repository: _p16._0});
-           return {ctor: "_Tuple2",_0: _U.update(model,{configViewModel: configView}),_1: $Effects.none};
-         case "UpdateApiKeyField": var currentConfigView = model.configViewModel;
+           return {ctor: "_Tuple2",_0: _U.update(model,{configPanel: configView}),_1: $Effects.none};
+         case "UpdateApiKeyField": var currentConfigView = model.configPanel;
            var keyModelValue = function () {
               var _p17 = $String.trim(_p16._0);
               if (_p17 === "") {
@@ -11174,10 +11174,8 @@ Elm.RadiatorApp.make = function (_elm) {
                  }
            }();
            var configView = _U.update(currentConfigView,{apiKey: keyModelValue});
-           return {ctor: "_Tuple2",_0: _U.update(model,{configViewModel: configView}),_1: $Effects.none};
-         default: return {ctor: "_Tuple2"
-                         ,_0: _U.update(model,{configuration: model.configViewModel,mode: Monitoring})
-                         ,_1: refreshBuilds(model.configViewModel)};}
+           return {ctor: "_Tuple2",_0: _U.update(model,{configPanel: configView}),_1: $Effects.none};
+         default: return {ctor: "_Tuple2",_0: _U.update(model,{configuration: model.configPanel,mode: Monitoring}),_1: refreshBuilds(model.configPanel)};}
    });
    var RefreshBuilds = {ctor: "RefreshBuilds"};
    var timedUpdate = A2($Signal.map,function (_p18) {    return RefreshBuilds;},$Time.every(30 * $Time.second));

@@ -24,7 +24,7 @@ type Action = RefreshBuilds
 type alias Model = {
   mode: AppMode,
   configuration: Configuration,
-  configViewModel: Configuration,
+  configPanel: Configuration,
   buildStatus : List BuildStatus
 }
 
@@ -62,18 +62,18 @@ update action model =
      NewBuildStatus Nothing -> (model, Effects.none)
      FlipConfigMode -> ({ model | mode = (flipAppMode model.mode) }, Effects.none)
      UpdateRepositoryField repo ->
-       let currentConfigView = model.configViewModel
+       let currentConfigView = model.configPanel
            configView = { currentConfigView | repository = repo }
-       in ({ model | configViewModel = configView }, Effects.none)
+       in ({ model | configPanel = configView }, Effects.none)
      UpdateApiKeyField key ->
        let keyModelValue = case String.trim key of
              ""  -> Nothing
              any -> Just any
-           currentConfigView = model.configViewModel
+           currentConfigView = model.configPanel
            configView = { currentConfigView | apiKey = keyModelValue }
-       in ({ model | configViewModel = configView }, Effects.none)
-     SaveConfiguration -> ({ model | configuration = model.configViewModel, 
-        mode = Monitoring }, (refreshBuilds model.configViewModel))
+       in ({ model | configPanel = configView }, Effects.none)
+     SaveConfiguration -> ({ model | configuration = model.configPanel, 
+        mode = Monitoring }, (refreshBuilds model.configPanel))
 
 refreshModelBuildState: Travis.BranchStatus -> Model -> Model 
 refreshModelBuildState updatedBranchStatus model =
@@ -102,7 +102,7 @@ view: Signal.Address Action -> Model -> Html
 view actionAddress model =
   let
      configMarkup = case model.mode of
-       Config -> configPanel model.configViewModel actionAddress 
+       Config -> configPanel model.configPanel actionAddress 
        _ -> []
   in
      Html.div [] [
