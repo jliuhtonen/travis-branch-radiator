@@ -38,10 +38,12 @@ baseUrl maybeKey = case maybeKey of
   Just _  -> "https://api.travis-ci.com"
   Nothing -> "https://api.travis-ci.org"
 
-getBranchBuildStatus : Maybe String -> String -> Task never (Maybe BranchStatus)
+getBranchBuildStatus : Maybe String -> String -> Task never (Maybe (String, BranchStatus))
 getBranchBuildStatus apiKey repositorySlug =
   let url = (baseUrl apiKey) ++ "/repos/" ++ repositorySlug ++ "/branches"
-  in travisApiGet apiKey decodeBranchStatus url |> Task.toMaybe
+  in travisApiGet apiKey decodeBranchStatus url 
+     |> Task.map (\xs -> (repositorySlug, xs))
+     |> Task.toMaybe
 
 travisApiGet : Maybe String -> Decoder a -> String -> Task Http.Error a
 travisApiGet apiKey decoder url =

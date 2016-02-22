@@ -10,12 +10,27 @@ ul {
   padding: 0;
 }
 
-.branch-list {
+.repository-listing {
   position: fixed;
   top: 0; right: 0; bottom: 0; left: 0;
   display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+}
+
+.repository-item {
+  flex: 1 0;
+}
+
+.repository-item:not(:first-child) {
+  border-left: 2px solid #002b36;
+}
+
+.branch-list {
+  display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
+  height: 100%;
   justify-content: center;
   align-content: space-around;
 }
@@ -23,11 +38,21 @@ ul {
 .branch {
   flex: 1 1 auto;
   margin: auto;
-  background: lightgreen;
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.repository-heading {
+  flex: 0 0 6%;
+  background-color: #002b36;
+  color: #fdf6e3;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+  font-size: 4vh;
+  text-align: center;
+  justify-content: center;
 }
 
 .branch:not(:first-child) {
@@ -71,8 +96,8 @@ ul {
   width: 5vh;
   height: 5vh;
   position: fixed;
-  top: 20px;
-  right: 20px;
+  top: 5px;
+  right: 10px;
   z-index: 10;
 }
 
