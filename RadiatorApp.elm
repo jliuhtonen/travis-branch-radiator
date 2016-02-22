@@ -151,7 +151,7 @@ configPanel { repositories, apiKey } actionAddress =
       repository = String.join "\n" repositories
   in 
      [Html.div [class "config-panel"] [
-       Html.label [for "slug-field"] [Html.text "Repository slug:"],
+       Html.label [for "slug-field"] [Html.text "Repository slugs (one per line):"],
        Html.textarea [id "repository-field", value repository, rows 5, Html.Events.on "input" Html.Events.targetValue (Signal.message actionAddress << UpdateRepositoryField << String.split "\n")] [],
        Html.label [for "api-key-field"] [Html.text "Private Travis API key:"],
        Html.input [id "api-key-field", value apiKeyValue, Html.Events.on "input" Html.Events.targetValue (Signal.message actionAddress << UpdateApiKeyField)] [],

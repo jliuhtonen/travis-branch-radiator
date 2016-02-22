@@ -11182,7 +11182,7 @@ Elm.RadiatorApp.make = function (_elm) {
       var apiKeyValue = A2($Maybe.withDefault,"",_p12.apiKey);
       return _U.list([A2($Html.div,
       _U.list([$Html$Attributes.$class("config-panel")]),
-      _U.list([A2($Html.label,_U.list([$Html$Attributes.$for("slug-field")]),_U.list([$Html.text("Repository slug:")]))
+      _U.list([A2($Html.label,_U.list([$Html$Attributes.$for("slug-field")]),_U.list([$Html.text("Repository slugs (one per line):")]))
               ,A2($Html.textarea,
               _U.list([$Html$Attributes.id("repository-field")
                       ,$Html$Attributes.value(repository)
