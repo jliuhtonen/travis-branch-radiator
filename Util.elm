@@ -4,6 +4,9 @@ import Maybe
 import List
 import Trampoline exposing (..)
 
+singleton: a -> List a
+singleton x = [x]
+
 sequence: List (Maybe a) -> Maybe (List a)
 sequence xs = trampoline (sequence' xs [])
 
