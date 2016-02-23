@@ -6,6 +6,7 @@ import Html.Attributes exposing (class, id, for, value, rows)
 import Html.Events exposing (onClick)
 
 import RadiatorModel exposing (..)
+import Util
 
 view: Signal.Address Action -> Model -> Html
 view actionAddress model =
@@ -31,13 +32,12 @@ buildRepositoryListing: RepositoryStatus -> List Html
 buildRepositoryListing (repositoryName, buildStatuses) =
   let 
       headerItem = Html.li [class "repository-heading"] [Html.text repositoryName]
-      singleton x = [x]
   in 
      List.take 5 buildStatuses
      |> List.map asListItem
      |> (::) headerItem
      |> Html.ul [class "branch-list"]
-     |> singleton
+     |> Util.singleton
 
 asListItem: BuildStatus -> Html
 asListItem s = Html.li [class ("branch " ++ s.state)] (branchElems s) 

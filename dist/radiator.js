@@ -11113,7 +11113,7 @@ Elm.Util.make = function (_elm) {
    });
    var sequence = function (xs) {    return $Trampoline.trampoline(A2(sequence$,xs,_U.list([])));};
    var singleton = function (x) {    return _U.list([x]);};
-   return _elm.Util.values = {_op: _op,sequence: sequence};
+   return _elm.Util.values = {_op: _op,sequence: sequence,singleton: singleton};
 };
 Elm.RadiatorModel = Elm.RadiatorModel || {};
 Elm.RadiatorModel.make = function (_elm) {
@@ -11173,7 +11173,8 @@ Elm.RadiatorView.make = function (_elm) {
    $RadiatorModel = Elm.RadiatorModel.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
-   $String = Elm.String.make(_elm);
+   $String = Elm.String.make(_elm),
+   $Util = Elm.Util.make(_elm);
    var _op = {};
    var configPanel = F2(function (_p0,actionAddress) {
       var _p1 = _p0;
@@ -11213,9 +11214,8 @@ Elm.RadiatorView.make = function (_elm) {
    var asListItem = function (s) {    return A2($Html.li,_U.list([$Html$Attributes.$class(A2($Basics._op["++"],"branch ",s.state))]),branchElems(s));};
    var buildRepositoryListing = function (_p6) {
       var _p7 = _p6;
-      var singleton = function (x) {    return _U.list([x]);};
       var headerItem = A2($Html.li,_U.list([$Html$Attributes.$class("repository-heading")]),_U.list([$Html.text(_p7._0)]));
-      return singleton(A2($Html.ul,
+      return $Util.singleton(A2($Html.ul,
       _U.list([$Html$Attributes.$class("branch-list")]),
       A2(F2(function (x,y) {    return A2($List._op["::"],x,y);}),headerItem,A2($List.map,asListItem,A2($List.take,5,_p7._1)))));
    };

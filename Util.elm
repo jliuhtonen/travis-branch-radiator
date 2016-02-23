@@ -1,4 +1,4 @@
-module Util(sequence) where
+module Util(sequence, singleton) where
 
 import Maybe
 import List
