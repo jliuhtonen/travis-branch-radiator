@@ -11112,7 +11112,212 @@ Elm.Util.make = function (_elm) {
          }
    });
    var sequence = function (xs) {    return $Trampoline.trampoline(A2(sequence$,xs,_U.list([])));};
+   var singleton = function (x) {    return _U.list([x]);};
    return _elm.Util.values = {_op: _op,sequence: sequence};
+};
+Elm.RadiatorModel = Elm.RadiatorModel || {};
+Elm.RadiatorModel.make = function (_elm) {
+   "use strict";
+   _elm.RadiatorModel = _elm.RadiatorModel || {};
+   if (_elm.RadiatorModel.values) return _elm.RadiatorModel.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Travis = Elm.Travis.make(_elm);
+   var _op = {};
+   var initialConfig = {apiKey: $Maybe.Nothing,repositories: _U.list(["elm-lang/elm-compiler","elm-lang/core"])};
+   var Config = {ctor: "Config"};
+   var Monitoring = {ctor: "Monitoring"};
+   var BuildStatus = F2(function (a,b) {    return {branch: a,state: b};});
+   var Configuration = F2(function (a,b) {    return {apiKey: a,repositories: b};});
+   var Model = F4(function (a,b,c,d) {    return {mode: a,configuration: b,configPanel: c,buildStatus: d};});
+   var initialModel = A4(Model,Config,initialConfig,initialConfig,_U.list([]));
+   var SaveConfiguration = {ctor: "SaveConfiguration"};
+   var UpdateApiKeyField = function (a) {    return {ctor: "UpdateApiKeyField",_0: a};};
+   var UpdateRepositoryField = function (a) {    return {ctor: "UpdateRepositoryField",_0: a};};
+   var FlipConfigMode = {ctor: "FlipConfigMode"};
+   var NewBuildStatus = function (a) {    return {ctor: "NewBuildStatus",_0: a};};
+   var RefreshBuilds = {ctor: "RefreshBuilds"};
+   return _elm.RadiatorModel.values = {_op: _op
+                                      ,RefreshBuilds: RefreshBuilds
+                                      ,NewBuildStatus: NewBuildStatus
+                                      ,FlipConfigMode: FlipConfigMode
+                                      ,UpdateRepositoryField: UpdateRepositoryField
+                                      ,UpdateApiKeyField: UpdateApiKeyField
+                                      ,SaveConfiguration: SaveConfiguration
+                                      ,Model: Model
+                                      ,Configuration: Configuration
+                                      ,BuildStatus: BuildStatus
+                                      ,Monitoring: Monitoring
+                                      ,Config: Config
+                                      ,initialConfig: initialConfig
+                                      ,initialModel: initialModel};
+};
+Elm.RadiatorView = Elm.RadiatorView || {};
+Elm.RadiatorView.make = function (_elm) {
+   "use strict";
+   _elm.RadiatorView = _elm.RadiatorView || {};
+   if (_elm.RadiatorView.values) return _elm.RadiatorView.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $Html$Events = Elm.Html.Events.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $RadiatorModel = Elm.RadiatorModel.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm);
+   var _op = {};
+   var configPanel = F2(function (_p0,actionAddress) {
+      var _p1 = _p0;
+      var repository = A2($String.join,"\n",_p1.repositories);
+      var apiKeyValue = A2($Maybe.withDefault,"",_p1.apiKey);
+      return _U.list([A2($Html.div,
+      _U.list([$Html$Attributes.$class("config-panel")]),
+      _U.list([A2($Html.label,_U.list([$Html$Attributes.$for("slug-field")]),_U.list([$Html.text("Repository slugs (one per line):")]))
+              ,A2($Html.textarea,
+              _U.list([$Html$Attributes.id("repository-field")
+                      ,$Html$Attributes.value(repository)
+                      ,$Html$Attributes.rows(5)
+                      ,A3($Html$Events.on,
+                      "input",
+                      $Html$Events.targetValue,
+                      function (_p2) {
+                         return A2($Signal.message,actionAddress,$RadiatorModel.UpdateRepositoryField(A2($String.split,"\n",_p2)));
+                      })]),
+              _U.list([]))
+              ,A2($Html.label,_U.list([$Html$Attributes.$for("api-key-field")]),_U.list([$Html.text("Private Travis API key:")]))
+              ,A2($Html.input,
+              _U.list([$Html$Attributes.id("api-key-field")
+                      ,$Html$Attributes.value(apiKeyValue)
+                      ,A3($Html$Events.on,
+                      "input",
+                      $Html$Events.targetValue,
+                      function (_p3) {
+                         return A2($Signal.message,actionAddress,$RadiatorModel.UpdateApiKeyField(_p3));
+                      })]),
+              _U.list([]))
+              ,A2($Html.button,_U.list([A2($Html$Events.onClick,actionAddress,$RadiatorModel.SaveConfiguration)]),_U.list([$Html.text("Save")]))]))]);
+   });
+   var branchElems = function (_p4) {
+      var _p5 = _p4;
+      return _U.list([A2($Html.span,_U.list([$Html$Attributes.$class("branch-name")]),_U.list([$Html.text(_p5.branch)]))]);
+   };
+   var asListItem = function (s) {    return A2($Html.li,_U.list([$Html$Attributes.$class(A2($Basics._op["++"],"branch ",s.state))]),branchElems(s));};
+   var buildRepositoryListing = function (_p6) {
+      var _p7 = _p6;
+      var singleton = function (x) {    return _U.list([x]);};
+      var headerItem = A2($Html.li,_U.list([$Html$Attributes.$class("repository-heading")]),_U.list([$Html.text(_p7._0)]));
+      return singleton(A2($Html.ul,
+      _U.list([$Html$Attributes.$class("branch-list")]),
+      A2(F2(function (x,y) {    return A2($List._op["::"],x,y);}),headerItem,A2($List.map,asListItem,A2($List.take,5,_p7._1)))));
+   };
+   var buildRadiatorListing = function (statuses) {
+      var asBuildListing = function (repoStatus) {
+         return A2($Html.li,_U.list([$Html$Attributes.$class("repository-item")]),buildRepositoryListing(repoStatus));
+      };
+      return A2($Html.ul,_U.list([$Html$Attributes.$class("repository-listing")]),A2($List.map,asBuildListing,statuses));
+   };
+   var view = F2(function (actionAddress,model) {
+      var configMarkup = function () {
+         var _p8 = model.mode;
+         if (_p8.ctor === "Config") {
+               return A2(configPanel,model.configPanel,actionAddress);
+            } else {
+               return _U.list([]);
+            }
+      }();
+      return A2($Html.div,
+      _U.list([]),
+      _U.list([A2($Html.button,
+              _U.list([$Html$Attributes.$class("config-button"),A2($Html$Events.onClick,actionAddress,$RadiatorModel.FlipConfigMode)]),
+              _U.list([]))
+              ,A2($Html.div,_U.list([]),configMarkup)
+              ,buildRadiatorListing(model.buildStatus)]));
+   });
+   return _elm.RadiatorView.values = {_op: _op,view: view};
+};
+Elm.RadiatorUpdate = Elm.RadiatorUpdate || {};
+Elm.RadiatorUpdate.make = function (_elm) {
+   "use strict";
+   _elm.RadiatorUpdate = _elm.RadiatorUpdate || {};
+   if (_elm.RadiatorUpdate.values) return _elm.RadiatorUpdate.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Effects = Elm.Effects.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $RadiatorModel = Elm.RadiatorModel.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $String = Elm.String.make(_elm),
+   $Task = Elm.Task.make(_elm),
+   $Travis = Elm.Travis.make(_elm),
+   $Util = Elm.Util.make(_elm);
+   var _op = {};
+   var flipAppMode = function (mode) {
+      var _p0 = mode;
+      if (_p0.ctor === "Monitoring") {
+            return $RadiatorModel.Config;
+         } else {
+            return $RadiatorModel.Monitoring;
+         }
+   };
+   var refreshBuilds = function (_p1) {
+      var _p2 = _p1;
+      var repositoryTasks = function (repository) {    return A2($Travis.getBranchBuildStatus,_p2.apiKey,repository);};
+      return $Effects.task(A2($Task.map,
+      function (_p3) {
+         return $RadiatorModel.NewBuildStatus($Util.sequence(_p3));
+      },
+      $Task.sequence(A2($List.map,repositoryTasks,_p2.repositories))));
+   };
+   var combineAsBuildStatus = F2(function (_p5,_p4) {    var _p6 = _p5;var _p7 = _p4;return {state: _p6.state,branch: _p7.branch};});
+   var toBuildStatusList = function (_p8) {
+      var _p9 = _p8;
+      return {ctor: "_Tuple2",_0: _p9._0,_1: A3($List.map2,combineAsBuildStatus,_p9._1.branches,_p9._1.commits)};
+   };
+   var refreshModelBuildState = F2(function (updatedBranchStatuses,model) {
+      var updatedBuildStatuses = A2($List.map,toBuildStatusList,updatedBranchStatuses);
+      return _U.update(model,{buildStatus: updatedBuildStatuses});
+   });
+   var update = F2(function (action,model) {
+      var _p10 = action;
+      switch (_p10.ctor)
+      {case "RefreshBuilds": return {ctor: "_Tuple2",_0: model,_1: refreshBuilds(model.configuration)};
+         case "NewBuildStatus": if (_p10._0.ctor === "Just") {
+                 return {ctor: "_Tuple2",_0: A2(refreshModelBuildState,_p10._0._0,model),_1: $Effects.none};
+              } else {
+                 return {ctor: "_Tuple2",_0: model,_1: $Effects.none};
+              }
+         case "FlipConfigMode": return {ctor: "_Tuple2",_0: _U.update(model,{mode: flipAppMode(model.mode)}),_1: $Effects.none};
+         case "UpdateRepositoryField": var currentConfigView = model.configPanel;
+           var configView = _U.update(currentConfigView,{repositories: _p10._0});
+           return {ctor: "_Tuple2",_0: _U.update(model,{configPanel: configView}),_1: $Effects.none};
+         case "UpdateApiKeyField": var currentConfigView = model.configPanel;
+           var keyModelValue = function () {
+              var _p11 = $String.trim(_p10._0);
+              if (_p11 === "") {
+                    return $Maybe.Nothing;
+                 } else {
+                    return $Maybe.Just(_p11);
+                 }
+           }();
+           var configView = _U.update(currentConfigView,{apiKey: keyModelValue});
+           return {ctor: "_Tuple2",_0: _U.update(model,{configPanel: configView}),_1: $Effects.none};
+         default: return {ctor: "_Tuple2"
+                         ,_0: _U.update(model,{configuration: model.configPanel,mode: $RadiatorModel.Monitoring})
+                         ,_1: refreshBuilds(model.configPanel)};}
+   });
+   return _elm.RadiatorUpdate.values = {_op: _op,update: update,refreshBuilds: refreshBuilds};
 };
 Elm.RadiatorApp = Elm.RadiatorApp || {};
 Elm.RadiatorApp.make = function (_elm) {
@@ -11124,173 +11329,23 @@ Elm.RadiatorApp.make = function (_elm) {
    $Debug = Elm.Debug.make(_elm),
    $Effects = Elm.Effects.make(_elm),
    $Html = Elm.Html.make(_elm),
-   $Html$Attributes = Elm.Html.Attributes.make(_elm),
-   $Html$Events = Elm.Html.Events.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
+   $RadiatorModel = Elm.RadiatorModel.make(_elm),
+   $RadiatorUpdate = Elm.RadiatorUpdate.make(_elm),
+   $RadiatorView = Elm.RadiatorView.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $StartApp = Elm.StartApp.make(_elm),
-   $String = Elm.String.make(_elm),
    $Task = Elm.Task.make(_elm),
-   $Time = Elm.Time.make(_elm),
-   $Travis = Elm.Travis.make(_elm),
-   $Util = Elm.Util.make(_elm);
+   $Time = Elm.Time.make(_elm);
    var _op = {};
-   var branchElems = function (_p0) {
-      var _p1 = _p0;
-      return _U.list([A2($Html.span,_U.list([$Html$Attributes.$class("branch-name")]),_U.list([$Html.text(_p1.branch)]))]);
-   };
-   var asListItem = function (s) {    return A2($Html.li,_U.list([$Html$Attributes.$class(A2($Basics._op["++"],"branch ",s.state))]),branchElems(s));};
-   var buildRepositoryListing = function (_p2) {
-      var _p3 = _p2;
-      var singleton = function (x) {    return _U.list([x]);};
-      var headerItem = A2($Html.li,_U.list([$Html$Attributes.$class("repository-heading")]),_U.list([$Html.text(_p3._0)]));
-      return singleton(A2($Html.ul,
-      _U.list([$Html$Attributes.$class("branch-list")]),
-      A2(F2(function (x,y) {    return A2($List._op["::"],x,y);}),headerItem,A2($List.map,asListItem,A2($List.take,5,_p3._1)))));
-   };
-   var buildRadiatorListing = function (statuses) {
-      var asBuildListing = function (repoStatus) {
-         return A2($Html.li,_U.list([$Html$Attributes.$class("repository-item")]),buildRepositoryListing(repoStatus));
-      };
-      return A2($Html.ul,_U.list([$Html$Attributes.$class("repository-listing")]),A2($List.map,asBuildListing,statuses));
-   };
-   var combineAsBuildStatus = F2(function (_p5,_p4) {    var _p6 = _p5;var _p7 = _p4;return {state: _p6.state,branch: _p7.branch};});
-   var toBuildStatusList = function (_p8) {
-      var _p9 = _p8;
-      return {ctor: "_Tuple2",_0: _p9._0,_1: A3($List.map2,combineAsBuildStatus,_p9._1.branches,_p9._1.commits)};
-   };
-   var refreshModelBuildState = F2(function (updatedBranchStatuses,model) {
-      var updatedBuildStatuses = A2($List.map,toBuildStatusList,updatedBranchStatuses);
-      return _U.update(model,{buildStatus: updatedBuildStatuses});
-   });
-   var initialConfig = {apiKey: $Maybe.Nothing,repositories: _U.list(["elm-lang/elm-compiler","elm-lang/core"])};
-   var Config = {ctor: "Config"};
-   var Monitoring = {ctor: "Monitoring"};
-   var flipAppMode = function (mode) {    var _p10 = mode;if (_p10.ctor === "Monitoring") {    return Config;} else {    return Monitoring;}};
-   var BuildStatus = F2(function (a,b) {    return {branch: a,state: b};});
-   var Configuration = F2(function (a,b) {    return {apiKey: a,repositories: b};});
-   var Model = F4(function (a,b,c,d) {    return {mode: a,configuration: b,configPanel: c,buildStatus: d};});
-   var model = A4(Model,Config,initialConfig,initialConfig,_U.list([]));
-   var SaveConfiguration = {ctor: "SaveConfiguration"};
-   var UpdateApiKeyField = function (a) {    return {ctor: "UpdateApiKeyField",_0: a};};
-   var UpdateRepositoryField = function (a) {    return {ctor: "UpdateRepositoryField",_0: a};};
-   var configPanel = F2(function (_p11,actionAddress) {
-      var _p12 = _p11;
-      var repository = A2($String.join,"\n",_p12.repositories);
-      var apiKeyValue = A2($Maybe.withDefault,"",_p12.apiKey);
-      return _U.list([A2($Html.div,
-      _U.list([$Html$Attributes.$class("config-panel")]),
-      _U.list([A2($Html.label,_U.list([$Html$Attributes.$for("slug-field")]),_U.list([$Html.text("Repository slugs (one per line):")]))
-              ,A2($Html.textarea,
-              _U.list([$Html$Attributes.id("repository-field")
-                      ,$Html$Attributes.value(repository)
-                      ,$Html$Attributes.rows(5)
-                      ,A3($Html$Events.on,
-                      "input",
-                      $Html$Events.targetValue,
-                      function (_p13) {
-                         return A2($Signal.message,actionAddress,UpdateRepositoryField(A2($String.split,"\n",_p13)));
-                      })]),
-              _U.list([]))
-              ,A2($Html.label,_U.list([$Html$Attributes.$for("api-key-field")]),_U.list([$Html.text("Private Travis API key:")]))
-              ,A2($Html.input,
-              _U.list([$Html$Attributes.id("api-key-field")
-                      ,$Html$Attributes.value(apiKeyValue)
-                      ,A3($Html$Events.on,
-                      "input",
-                      $Html$Events.targetValue,
-                      function (_p14) {
-                         return A2($Signal.message,actionAddress,UpdateApiKeyField(_p14));
-                      })]),
-              _U.list([]))
-              ,A2($Html.button,_U.list([A2($Html$Events.onClick,actionAddress,SaveConfiguration)]),_U.list([$Html.text("Save")]))]))]);
-   });
-   var FlipConfigMode = {ctor: "FlipConfigMode"};
-   var view = F2(function (actionAddress,model) {
-      var configMarkup = function () {
-         var _p15 = model.mode;
-         if (_p15.ctor === "Config") {
-               return A2(configPanel,model.configPanel,actionAddress);
-            } else {
-               return _U.list([]);
-            }
-      }();
-      return A2($Html.div,
-      _U.list([]),
-      _U.list([A2($Html.button,_U.list([$Html$Attributes.$class("config-button"),A2($Html$Events.onClick,actionAddress,FlipConfigMode)]),_U.list([]))
-              ,A2($Html.div,_U.list([]),configMarkup)
-              ,buildRadiatorListing(model.buildStatus)]));
-   });
-   var NewBuildStatus = function (a) {    return {ctor: "NewBuildStatus",_0: a};};
-   var refreshBuilds = function (_p16) {
-      var _p17 = _p16;
-      var repositoryTasks = function (repository) {    return A2($Travis.getBranchBuildStatus,_p17.apiKey,repository);};
-      return $Effects.task(A2($Task.map,
-      function (_p18) {
-         return NewBuildStatus($Util.sequence(_p18));
-      },
-      $Task.sequence(A2($List.map,repositoryTasks,_p17.repositories))));
-   };
-   var update = F2(function (action,model) {
-      var _p19 = action;
-      switch (_p19.ctor)
-      {case "RefreshBuilds": return {ctor: "_Tuple2",_0: model,_1: refreshBuilds(model.configuration)};
-         case "NewBuildStatus": if (_p19._0.ctor === "Just") {
-                 return {ctor: "_Tuple2",_0: A2(refreshModelBuildState,_p19._0._0,model),_1: $Effects.none};
-              } else {
-                 return {ctor: "_Tuple2",_0: model,_1: $Effects.none};
-              }
-         case "FlipConfigMode": return {ctor: "_Tuple2",_0: _U.update(model,{mode: flipAppMode(model.mode)}),_1: $Effects.none};
-         case "UpdateRepositoryField": var currentConfigView = model.configPanel;
-           var configView = _U.update(currentConfigView,{repositories: _p19._0});
-           return {ctor: "_Tuple2",_0: _U.update(model,{configPanel: configView}),_1: $Effects.none};
-         case "UpdateApiKeyField": var currentConfigView = model.configPanel;
-           var keyModelValue = function () {
-              var _p20 = $String.trim(_p19._0);
-              if (_p20 === "") {
-                    return $Maybe.Nothing;
-                 } else {
-                    return $Maybe.Just(_p20);
-                 }
-           }();
-           var configView = _U.update(currentConfigView,{apiKey: keyModelValue});
-           return {ctor: "_Tuple2",_0: _U.update(model,{configPanel: configView}),_1: $Effects.none};
-         default: return {ctor: "_Tuple2",_0: _U.update(model,{configuration: model.configPanel,mode: Monitoring}),_1: refreshBuilds(model.configPanel)};}
-   });
-   var RefreshBuilds = {ctor: "RefreshBuilds"};
-   var timedUpdate = A2($Signal.map,function (_p21) {    return RefreshBuilds;},$Time.every(30 * $Time.second));
-   var app = $StartApp.start({init: {ctor: "_Tuple2",_0: model,_1: refreshBuilds(initialConfig)},view: view,update: update,inputs: _U.list([timedUpdate])});
+   var timedUpdate = A2($Signal.map,function (_p0) {    return $RadiatorModel.RefreshBuilds;},$Time.every(30 * $Time.second));
+   var app = $StartApp.start({init: {ctor: "_Tuple2",_0: $RadiatorModel.initialModel,_1: $RadiatorUpdate.refreshBuilds($RadiatorModel.initialConfig)}
+                             ,view: $RadiatorView.view
+                             ,update: $RadiatorUpdate.update
+                             ,inputs: _U.list([timedUpdate])});
    var main = app.html;
    var tasks = Elm.Native.Task.make(_elm).performSignal("tasks",app.tasks);
-   return _elm.RadiatorApp.values = {_op: _op
-                                    ,RefreshBuilds: RefreshBuilds
-                                    ,NewBuildStatus: NewBuildStatus
-                                    ,FlipConfigMode: FlipConfigMode
-                                    ,UpdateRepositoryField: UpdateRepositoryField
-                                    ,UpdateApiKeyField: UpdateApiKeyField
-                                    ,SaveConfiguration: SaveConfiguration
-                                    ,Model: Model
-                                    ,Configuration: Configuration
-                                    ,BuildStatus: BuildStatus
-                                    ,Monitoring: Monitoring
-                                    ,Config: Config
-                                    ,app: app
-                                    ,main: main
-                                    ,timedUpdate: timedUpdate
-                                    ,initialConfig: initialConfig
-                                    ,model: model
-                                    ,update: update
-                                    ,refreshModelBuildState: refreshModelBuildState
-                                    ,toBuildStatusList: toBuildStatusList
-                                    ,combineAsBuildStatus: combineAsBuildStatus
-                                    ,refreshBuilds: refreshBuilds
-                                    ,flipAppMode: flipAppMode
-                                    ,view: view
-                                    ,buildRadiatorListing: buildRadiatorListing
-                                    ,buildRepositoryListing: buildRepositoryListing
-                                    ,asListItem: asListItem
-                                    ,branchElems: branchElems
-                                    ,configPanel: configPanel};
+   return _elm.RadiatorApp.values = {_op: _op,app: app,main: main,timedUpdate: timedUpdate};
 };
