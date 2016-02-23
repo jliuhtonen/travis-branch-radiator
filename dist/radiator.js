@@ -11085,36 +11085,6 @@ Elm.Travis.make = function (_elm) {
                                ,travisHeaders: travisHeaders
                                ,getAuthHeaders: getAuthHeaders};
 };
-Elm.Util = Elm.Util || {};
-Elm.Util.make = function (_elm) {
-   "use strict";
-   _elm.Util = _elm.Util || {};
-   if (_elm.Util.values) return _elm.Util.values;
-   var _U = Elm.Native.Utils.make(_elm),
-   $Basics = Elm.Basics.make(_elm),
-   $Debug = Elm.Debug.make(_elm),
-   $List = Elm.List.make(_elm),
-   $Maybe = Elm.Maybe.make(_elm),
-   $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm),
-   $Trampoline = Elm.Trampoline.make(_elm);
-   var _op = {};
-   var sequence$ = F2(function (xs,acc) {
-      var _p0 = xs;
-      if (_p0.ctor === "[]") {
-            return $Trampoline.Done($Maybe.Just($List.reverse(acc)));
-         } else {
-            if (_p0._0.ctor === "Just") {
-                  return $Trampoline.Continue(function (_p1) {    return A2(sequence$,_p0._1,A2($List._op["::"],_p0._0._0,acc));});
-               } else {
-                  return $Trampoline.Done($Maybe.Nothing);
-               }
-         }
-   });
-   var sequence = function (xs) {    return $Trampoline.trampoline(A2(sequence$,xs,_U.list([])));};
-   var singleton = function (x) {    return _U.list([x]);};
-   return _elm.Util.values = {_op: _op,sequence: sequence,singleton: singleton};
-};
 Elm.RadiatorModel = Elm.RadiatorModel || {};
 Elm.RadiatorModel.make = function (_elm) {
    "use strict";
@@ -11156,6 +11126,36 @@ Elm.RadiatorModel.make = function (_elm) {
                                       ,Config: Config
                                       ,initialConfig: initialConfig
                                       ,initialModel: initialModel};
+};
+Elm.Util = Elm.Util || {};
+Elm.Util.make = function (_elm) {
+   "use strict";
+   _elm.Util = _elm.Util || {};
+   if (_elm.Util.values) return _elm.Util.values;
+   var _U = Elm.Native.Utils.make(_elm),
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Trampoline = Elm.Trampoline.make(_elm);
+   var _op = {};
+   var sequence$ = F2(function (xs,acc) {
+      var _p0 = xs;
+      if (_p0.ctor === "[]") {
+            return $Trampoline.Done($Maybe.Just($List.reverse(acc)));
+         } else {
+            if (_p0._0.ctor === "Just") {
+                  return $Trampoline.Continue(function (_p1) {    return A2(sequence$,_p0._1,A2($List._op["::"],_p0._0._0,acc));});
+               } else {
+                  return $Trampoline.Done($Maybe.Nothing);
+               }
+         }
+   });
+   var sequence = function (xs) {    return $Trampoline.trampoline(A2(sequence$,xs,_U.list([])));};
+   var singleton = function (x) {    return _U.list([x]);};
+   return _elm.Util.values = {_op: _op,sequence: sequence,singleton: singleton};
 };
 Elm.RadiatorView = Elm.RadiatorView || {};
 Elm.RadiatorView.make = function (_elm) {

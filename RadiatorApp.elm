@@ -1,18 +1,9 @@
 module RadiatorApp where
 import StartApp
-import Effects exposing (Never, Effects)
+import Effects exposing (Never)
+import Html exposing (Html)
 import Task exposing (Task)
 import Time exposing (..)
-import String
-import Json.Decode exposing (Decoder)
-import Http
-import Html exposing (Html)
-import Html.Attributes exposing (class, id, for, value, rows)
-import Html.Events exposing (onClick)
-import Travis
-import Util
-import Debug
-
 import RadiatorModel as Model
 import RadiatorView as View
 import RadiatorUpdate as Update
