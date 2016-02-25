@@ -11176,6 +11176,10 @@ Elm.RadiatorView.make = function (_elm) {
    $String = Elm.String.make(_elm),
    $Util = Elm.Util.make(_elm);
    var _op = {};
+   var displayableRepoName = function (name) {
+      var nameParts = A2($String.split,"/",name);
+      return _U.cmp($List.length(nameParts),1) > 0 ? A2($Maybe.withDefault,name,$List.head(A2($List.drop,1,nameParts))) : name;
+   };
    var configPanel = F2(function (_p0,actionAddress) {
       var _p1 = _p0;
       var repository = A2($String.join,"\n",_p1.repositories);
@@ -11214,7 +11218,8 @@ Elm.RadiatorView.make = function (_elm) {
    var asListItem = function (s) {    return A2($Html.li,_U.list([$Html$Attributes.$class(A2($Basics._op["++"],"branch ",s.state))]),branchElems(s));};
    var buildRepositoryListing = function (_p6) {
       var _p7 = _p6;
-      var headerItem = A2($Html.li,_U.list([$Html$Attributes.$class("repository-heading")]),_U.list([$Html.text(_p7._0)]));
+      var repoDisplayName = displayableRepoName(_p7._0);
+      var headerItem = A2($Html.li,_U.list([$Html$Attributes.$class("repository-heading")]),_U.list([$Html.text(repoDisplayName)]));
       return $Util.singleton(A2($Html.ul,
       _U.list([$Html$Attributes.$class("branch-list")]),
       A2(F2(function (x,y) {    return A2($List._op["::"],x,y);}),headerItem,A2($List.map,asListItem,A2($List.take,5,_p7._1)))));

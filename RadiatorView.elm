@@ -31,7 +31,8 @@ buildRadiatorListing statuses =
 buildRepositoryListing: RepositoryStatus -> List Html
 buildRepositoryListing (repositoryName, buildStatuses) =
   let 
-      headerItem = Html.li [class "repository-heading"] [Html.text repositoryName]
+      repoDisplayName = displayableRepoName repositoryName
+      headerItem = Html.li [class "repository-heading"] [Html.text repoDisplayName]
   in 
      List.take 5 buildStatuses
      |> List.map asListItem
@@ -60,3 +61,12 @@ configPanel { repositories, apiKey } actionAddress =
        Html.input [id "api-key-field", value apiKeyValue, Html.Events.on "input" Html.Events.targetValue (Signal.message actionAddress << UpdateApiKeyField)] [],
        Html.button [onClick actionAddress SaveConfiguration] [ Html.text "Save" ]
        ]]
+
+displayableRepoName: String -> String
+displayableRepoName name =
+  let nameParts = String.split "/" name
+  in if List.length nameParts > 1
+     then List.drop 1 nameParts
+          |> List.head
+          |> Maybe.withDefault name
+     else name
