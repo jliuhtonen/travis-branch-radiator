@@ -6,9 +6,8 @@ Travis branch build status radiator/dashboard.
 * Does not send your API key anywhere except the Travis API through HTTPS.
 * Responsive layout with solarized colors
 * Works in the browser
+* Saves the configuration in local storage
 * Built with [Elm](http://elm-lang.org/)
-
-Pull requests welcome.
 
 ## License
 
