@@ -12,14 +12,16 @@
   </body>
 
   <script type="text/javascript">
-    var localStorageKey = 'radiatorConfig'
-    var savedConfiguration = localStorage.getItem(localStorageKey)
-    var config = savedConfiguration ? JSON.parse(savedConfiguration) : null
-    var appElem = document.getElementById('app');
-    var app = Elm.embed(Elm.RadiatorApp, appElem, { loadConfiguration: config })
-    app.ports.saveConfiguration.subscribe(function(newConfig) {
+    ;(function() {
+      var localStorageKey = 'radiatorConfig'
+      var savedConfiguration = localStorage.getItem(localStorageKey)
+      var config = savedConfiguration ? JSON.parse(savedConfiguration) : null
+      var appElem = document.getElementById('app');
+      var app = Elm.embed(Elm.RadiatorApp, appElem, { loadConfiguration: config })
+      app.ports.saveConfiguration.subscribe(function(newConfig) {
         localStorage.setItem(localStorageKey, JSON.stringify(newConfig))
-    })
+        })
+      })()
     </script>
 
   </html>
