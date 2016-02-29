@@ -11099,13 +11099,11 @@ Elm.RadiatorModel.make = function (_elm) {
    $Signal = Elm.Signal.make(_elm),
    $Travis = Elm.Travis.make(_elm);
    var _op = {};
-   var initialConfig = {apiKey: $Maybe.Nothing,repositories: _U.list(["elm-lang/elm-compiler","elm-lang/core"])};
    var Config = {ctor: "Config"};
    var Monitoring = {ctor: "Monitoring"};
    var BuildStatus = F2(function (a,b) {    return {branch: a,state: b};});
    var Configuration = F2(function (a,b) {    return {apiKey: a,repositories: b};});
    var Model = F4(function (a,b,c,d) {    return {mode: a,configuration: b,configPanel: c,buildStatus: d};});
-   var initialModel = A4(Model,Config,initialConfig,initialConfig,_U.list([]));
    var SaveConfiguration = {ctor: "SaveConfiguration"};
    var UpdateApiKeyField = function (a) {    return {ctor: "UpdateApiKeyField",_0: a};};
    var UpdateRepositoryField = function (a) {    return {ctor: "UpdateRepositoryField",_0: a};};
@@ -11123,9 +11121,7 @@ Elm.RadiatorModel.make = function (_elm) {
                                       ,Configuration: Configuration
                                       ,BuildStatus: BuildStatus
                                       ,Monitoring: Monitoring
-                                      ,Config: Config
-                                      ,initialConfig: initialConfig
-                                      ,initialModel: initialModel};
+                                      ,Config: Config};
 };
 Elm.Util = Elm.Util || {};
 Elm.Util.make = function (_elm) {
@@ -11345,12 +11341,40 @@ Elm.RadiatorApp.make = function (_elm) {
    $Task = Elm.Task.make(_elm),
    $Time = Elm.Time.make(_elm);
    var _op = {};
+   var loadConfiguration = Elm.Native.Port.make(_elm).inbound("loadConfiguration",
+   "Maybe.Maybe\n    RadiatorModel.Configuration",
+   function (v) {
+      return v === null ? Elm.Maybe.make(_elm).Nothing : Elm.Maybe.make(_elm).Just(typeof v === "object" && "apiKey" in v && "repositories" in v ? {_: {}
+                                                                                                                                                   ,apiKey: v.apiKey === null ? Elm.Maybe.make(_elm).Nothing : Elm.Maybe.make(_elm).Just(typeof v.apiKey === "string" || typeof v.apiKey === "object" && v.apiKey instanceof String ? v.apiKey : _U.badPort("a string",
+                                                                                                                                                   v.apiKey))
+                                                                                                                                                   ,repositories: typeof v.repositories === "object" && v.repositories instanceof Array ? Elm.Native.List.make(_elm).fromArray(v.repositories.map(function (v) {
+                                                                                                                                                      return typeof v === "string" || typeof v === "object" && v instanceof String ? v : _U.badPort("a string",
+                                                                                                                                                      v);
+                                                                                                                                                   })) : _U.badPort("an array",
+                                                                                                                                                   v.repositories)} : _U.badPort("an object with fields `apiKey`, `repositories`",
+      v));
+   });
    var timedUpdate = A2($Signal.map,function (_p0) {    return $RadiatorModel.RefreshBuilds;},$Time.every(30 * $Time.second));
-   var app = $StartApp.start({init: {ctor: "_Tuple2",_0: $RadiatorModel.initialModel,_1: $RadiatorUpdate.refreshBuilds($RadiatorModel.initialConfig)}
+   var defaultConfig = {apiKey: $Maybe.Nothing,repositories: _U.list(["elm-lang/elm-compiler","elm-lang/core"])};
+   var config = A2($Maybe.withDefault,defaultConfig,loadConfiguration);
+   var initialModel = A4($RadiatorModel.Model,$RadiatorModel.Config,config,config,_U.list([]));
+   var app = $StartApp.start({init: {ctor: "_Tuple2",_0: initialModel,_1: $RadiatorUpdate.refreshBuilds(config)}
                              ,view: $RadiatorView.view
                              ,update: $RadiatorUpdate.update
                              ,inputs: _U.list([timedUpdate])});
    var main = app.html;
    var tasks = Elm.Native.Task.make(_elm).performSignal("tasks",app.tasks);
-   return _elm.RadiatorApp.values = {_op: _op,app: app,main: main,timedUpdate: timedUpdate};
+   var saveConfiguration = Elm.Native.Port.make(_elm).outboundSignal("saveConfiguration",
+   function (v) {
+      return {apiKey: v.apiKey.ctor === "Nothing" ? null : v.apiKey._0
+             ,repositories: Elm.Native.List.make(_elm).toArray(v.repositories).map(function (v) {    return v;})};
+   },
+   A2($Signal.map,function (model) {    return model.configuration;},app.model));
+   return _elm.RadiatorApp.values = {_op: _op
+                                    ,defaultConfig: defaultConfig
+                                    ,config: config
+                                    ,initialModel: initialModel
+                                    ,app: app
+                                    ,main: main
+                                    ,timedUpdate: timedUpdate};
 };

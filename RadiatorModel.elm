@@ -29,9 +29,3 @@ type alias BuildStatus = {
 }
 
 type AppMode = Monitoring | Config
-
-
-initialConfig = { apiKey = Nothing, repositories = 
-  ["elm-lang/elm-compiler", "elm-lang/core"] }
-
-initialModel = Model Config initialConfig initialConfig []
