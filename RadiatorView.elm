@@ -55,9 +55,13 @@ configPanel { repositories, apiKey } { repositorySlug } actionAddress =
       repositoryItems = List.map (repositoryItem actionAddress) repositories
   in 
      [Html.div [class "config-panel"] [
+       Html.h2 [] [Html.text "Configuration"],
+       Html.h3 [] [Html.text "Repositories"],
        Html.ul [class "config-repository-list"] repositoryItems,
        addRepository repositorySlug actionAddress,
-       addApiKey apiKeyValue actionAddress
+       Html.h3 [] [Html.text "API"],
+       addApiKey apiKeyValue actionAddress,
+       attributions
        ]]
 
 addRepository: String -> Signal.Address Action -> Html
@@ -81,7 +85,7 @@ repositoryItem address repoName =
   let clickOptions = { preventDefault = True, stopPropagation = False }
   in Html.li [] [
     Html.span [] [Html.text repoName],
-    Html.a [Html.Events.onClick address (RemoveRepository repoName), Html.Attributes.href "#"] [Html.text "X"]
+    Html.a [Html.Events.onClick address (RemoveRepository repoName), Html.Attributes.href "#"] [Html.img [class "remove-repository-icon", Html.Attributes.src "close-circular-button.svg"] []]
     ]
 
 displayableRepoName: String -> String
@@ -92,3 +96,11 @@ displayableRepoName name =
           |> List.head
           |> Maybe.withDefault name
      else name
+
+attributions: Html
+attributions =
+  Html.div [class "attributions"] [
+    Html.text "Icons made by",
+    Html.a [Html.Attributes.href "http://www.flaticon.com/authors/robin-kylander"] [Html.text "Robin Kylander"],
+    Html.text " from www.flaticon.com is licensed by CC 3.0 BY"
+    ]

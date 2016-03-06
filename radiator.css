@@ -105,19 +105,22 @@ ul {
 
 .config-panel {
   border-radius: 3px;
-  border: 2px solid #002b36;
-  background-color: #93a1a1;
+  background-color: #002b36;
+  color: b58900;
   overflow: scroll;
   line-height: 40px;
   vertical-align: middle;
   position: fixed;
   left: 50%;
   top: 50%;
-  width: 400px;
-  height: 300px;
+  max-width: 400px;
   margin: -200px 0 0 -200px;
-  padding: 50px;
+  padding: 25px 50px;
   z-index: 20;
+}
+
+.config-panel h2, .config-panel h3 {
+  margin: 0;
 }
 
 .config-panel input {
@@ -134,19 +137,38 @@ ul {
 .config-panel button {
   padding: 8px;
   font-size: 15px;
+  height: 40px;
+  margin-left: 15px;
 }
 
-.config-panel-control {
-  display: flex;
-  align-items: center;
+.config-panel label {
+  display: block;
 }
 
 .config-repository-list {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  justify-content: space-around;
 }
 
 .config-repository-list li {
+  background-color: #073642;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
   padding: 8px;
+}
+
+.remove-repository-icon {
+  margin-left: 10px;
+  width: 35px;
+  height: 35px;
+}
+
+.attributions {
+  font-size: 12px;
+  line-height: 2em;
+  margin-top: 50px;
 }
