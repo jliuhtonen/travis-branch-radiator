@@ -19,7 +19,9 @@ update action model =
 
      NewBuildStatus Nothing -> (model, Effects.none)
 
-     FlipConfigMode -> ({ model | mode = (flipAppMode model.mode) }, Effects.none)
+     FlipConfigMode -> 
+       ({ model | mode = (flipAppMode model.mode) }, Effects.none)
+
      UpdateRepositoryField repository ->
        let cfg = model.configPanel
            configView = { cfg | repositorySlug = repository }
