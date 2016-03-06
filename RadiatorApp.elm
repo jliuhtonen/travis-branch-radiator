@@ -12,7 +12,8 @@ defaultConfig = { apiKey = Nothing, repositories =
   ["elm-lang/elm-compiler", "elm-lang/core"] }
 
 config = Maybe.withDefault defaultConfig loadConfiguration
-initialModel = Model.Model Model.Config config config []
+initialConfigPanel = { repositorySlug = "", apiKey = "" }
+initialModel = Model.Model Model.Config config initialConfigPanel []
 
 app = StartApp.start { init = (initialModel, Update.refreshBuilds config), view = View.view, update = Update.update, inputs = [timedUpdate] }
 

@@ -12,7 +12,7 @@ view: Signal.Address Action -> Model -> Html
 view actionAddress model =
   let
      configMarkup = case model.mode of
-       Config -> configPanel model.configPanel actionAddress 
+       Config -> configPanel model.configuration model.configPanel actionAddress 
        _ -> []
   in
      Html.div [] [
@@ -48,19 +48,41 @@ branchElems { branch } = [
     (Html.span [class "branch-name"] [Html.text branch])
   ]
 
-configPanel: Configuration -> Signal.Address Action -> List Html
-configPanel { repositories, apiKey } actionAddress = 
+configPanel: Configuration -> ConfigPanel -> Signal.Address Action -> List Html
+configPanel { repositories, apiKey } { repositorySlug } actionAddress = 
   let
       apiKeyValue = Maybe.withDefault "" apiKey
-      repository = String.join "\n" repositories
+      repositoryItems = List.map (repositoryItem actionAddress) repositories
   in 
      [Html.div [class "config-panel"] [
-       Html.label [for "slug-field"] [Html.text "Repository slugs (one per line):"],
-       Html.textarea [id "repository-field", value repository, rows 5, Html.Events.on "input" Html.Events.targetValue (Signal.message actionAddress << UpdateRepositoryField << String.split "\n")] [],
-       Html.label [for "api-key-field"] [Html.text "Private Travis API key:"],
-       Html.input [id "api-key-field", value apiKeyValue, Html.Events.on "input" Html.Events.targetValue (Signal.message actionAddress << UpdateApiKeyField)] [],
-       Html.button [onClick actionAddress SaveConfiguration] [ Html.text "Save" ]
+       Html.ul [class "config-repository-list"] repositoryItems,
+       addRepository repositorySlug actionAddress,
+       addApiKey apiKeyValue actionAddress
        ]]
+
+addRepository: String -> Signal.Address Action -> Html
+addRepository repositorySlug address =
+  Html.div [class "config-panel-control"] [
+    Html.label [for "add-repository"] [Html.text "Add a new repository"],
+    Html.input [id "add-repository", value repositorySlug, Html.Events.on "input" Html.Events.targetValue (Signal.message address << UpdateRepositoryField)] [] ,
+    Html.button [onClick address AddRepository] [Html.text "Add"]
+  ]
+
+addApiKey: String -> Signal.Address Action -> Html
+addApiKey apiKey actionAddress =
+  Html.div [class "config-panel-control"] [
+    Html.label [for "api-key-field"] [Html.text "Private Travis API key:"],
+    Html.input [id "api-key-field", value apiKey, Html.Events.on "input" Html.Events.targetValue (Signal.message actionAddress << UpdateApiKeyField)] [],
+    Html.button [onClick actionAddress SaveApiKey] [ Html.text "Set" ]
+    ]
+
+repositoryItem: Signal.Address Action -> String -> Html
+repositoryItem address repoName =
+  let clickOptions = { preventDefault = True, stopPropagation = False }
+  in Html.li [] [
+    Html.span [] [Html.text repoName],
+    Html.a [Html.Events.onClick address (RemoveRepository repoName), Html.Attributes.href "#"] [Html.text "X"]
+    ]
 
 displayableRepoName: String -> String
 displayableRepoName name =

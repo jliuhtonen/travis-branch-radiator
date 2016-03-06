@@ -120,16 +120,11 @@ ul {
   z-index: 20;
 }
 
-.config-panel label {
-  margin-top: 10px;
-}
-
-.config-panel input, .config-panel textarea {
+.config-panel input {
   background-color: #eee8d5;
   border-radius: 3px;
   clear: right;
   font-size: 15px;
-  width: 100%;
 }
 
 .config-panel input {
@@ -139,9 +134,19 @@ ul {
 .config-panel button {
   padding: 8px;
   font-size: 15px;
-  position: absolute;
-  left: 50%;
-  bottom: 25px;
-  margin-left: -27px;
 }
 
+.config-panel-control {
+  display: flex;
+  align-items: center;
+}
+
+.config-repository-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.config-repository-list li {
+  padding: 8px;
+}
