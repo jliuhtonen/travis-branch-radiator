@@ -9,6 +9,7 @@ type Action = RefreshBuilds
             | AddRepository
             | RemoveRepository String
             | UpdateApiKeyField String 
+            | TogglePrivateTravis Bool
             | SaveApiKey
             | SaveConfiguration
 
@@ -28,7 +29,7 @@ type alias Configuration = {
 
 type alias ConfigPanel = {
   repositorySlug: String,
-  apiKey: String
+  apiKeyValue: String
 }
 
 type alias BuildStatus = {

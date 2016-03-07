@@ -11102,11 +11102,12 @@ Elm.RadiatorModel.make = function (_elm) {
    var Config = {ctor: "Config"};
    var Monitoring = {ctor: "Monitoring"};
    var BuildStatus = F2(function (a,b) {    return {branch: a,state: b};});
-   var ConfigPanel = F2(function (a,b) {    return {repositorySlug: a,apiKey: b};});
+   var ConfigPanel = F2(function (a,b) {    return {repositorySlug: a,apiKeyValue: b};});
    var Configuration = F2(function (a,b) {    return {apiKey: a,repositories: b};});
    var Model = F4(function (a,b,c,d) {    return {mode: a,configuration: b,configPanel: c,buildStatus: d};});
    var SaveConfiguration = {ctor: "SaveConfiguration"};
    var SaveApiKey = {ctor: "SaveApiKey"};
+   var TogglePrivateTravis = function (a) {    return {ctor: "TogglePrivateTravis",_0: a};};
    var UpdateApiKeyField = function (a) {    return {ctor: "UpdateApiKeyField",_0: a};};
    var RemoveRepository = function (a) {    return {ctor: "RemoveRepository",_0: a};};
    var AddRepository = {ctor: "AddRepository"};
@@ -11122,6 +11123,7 @@ Elm.RadiatorModel.make = function (_elm) {
                                       ,AddRepository: AddRepository
                                       ,RemoveRepository: RemoveRepository
                                       ,UpdateApiKeyField: UpdateApiKeyField
+                                      ,TogglePrivateTravis: TogglePrivateTravis
                                       ,SaveApiKey: SaveApiKey
                                       ,SaveConfiguration: SaveConfiguration
                                       ,Model: Model
@@ -11159,7 +11161,8 @@ Elm.Util.make = function (_elm) {
    });
    var sequence = function (xs) {    return $Trampoline.trampoline(A2(sequence$,xs,_U.list([])));};
    var singleton = function (x) {    return _U.list([x]);};
-   return _elm.Util.values = {_op: _op,sequence: sequence,singleton: singleton};
+   var isJust = function (m) {    var _p2 = m;if (_p2.ctor === "Just") {    return true;} else {    return false;}};
+   return _elm.Util.values = {_op: _op,isJust: isJust,sequence: sequence,singleton: singleton};
 };
 Elm.RadiatorView = Elm.RadiatorView || {};
 Elm.RadiatorView.make = function (_elm) {
@@ -11200,18 +11203,30 @@ Elm.RadiatorView.make = function (_elm) {
               _U.list([$Html$Attributes.$class("remove-repository-icon"),$Html$Attributes.src("close-circular-button.svg")]),
               _U.list([]))]))]));
    });
-   var addApiKey = F2(function (apiKey,actionAddress) {
+   var addApiKey = F3(function (usePrivateTravis,apiKey,actionAddress) {
       return A2($Html.div,
       _U.list([$Html$Attributes.$class("config-panel-control")]),
-      _U.list([A2($Html.label,_U.list([$Html$Attributes.$for("api-key-field")]),_U.list([$Html.text("Private Travis API key:")]))
+      _U.list([A2($Html.label,_U.list([$Html$Attributes.$for("use-private-travis-checkbox")]),_U.list([$Html.text("Use private Travis")]))
+              ,A2($Html.input,
+              _U.list([$Html$Attributes.id("use-private-travis-checkbox")
+                      ,$Html$Attributes.type$("checkbox")
+                      ,$Html$Attributes.checked(usePrivateTravis)
+                      ,A3($Html$Events.on,
+                      "change",
+                      $Html$Events.targetChecked,
+                      function (_p0) {
+                         return A2($Signal.message,actionAddress,$RadiatorModel.TogglePrivateTravis(_p0));
+                      })]),
+              _U.list([]))
+              ,A2($Html.label,_U.list([$Html$Attributes.$for("api-key-field")]),_U.list([$Html.text("Private Travis API key:")]))
               ,A2($Html.input,
               _U.list([$Html$Attributes.id("api-key-field")
                       ,$Html$Attributes.value(apiKey)
                       ,A3($Html$Events.on,
                       "input",
                       $Html$Events.targetValue,
-                      function (_p0) {
-                         return A2($Signal.message,actionAddress,$RadiatorModel.UpdateApiKeyField(_p0));
+                      function (_p1) {
+                         return A2($Signal.message,actionAddress,$RadiatorModel.UpdateApiKeyField(_p1));
                       })]),
               _U.list([]))
               ,A2($Html.button,_U.list([A2($Html$Events.onClick,actionAddress,$RadiatorModel.SaveApiKey)]),_U.list([$Html.text("Set")]))]));
@@ -11226,39 +11241,39 @@ Elm.RadiatorView.make = function (_elm) {
                       ,A3($Html$Events.on,
                       "input",
                       $Html$Events.targetValue,
-                      function (_p1) {
-                         return A2($Signal.message,address,$RadiatorModel.UpdateRepositoryField(_p1));
+                      function (_p2) {
+                         return A2($Signal.message,address,$RadiatorModel.UpdateRepositoryField(_p2));
                       })]),
               _U.list([]))
               ,A2($Html.button,_U.list([A2($Html$Events.onClick,address,$RadiatorModel.AddRepository)]),_U.list([$Html.text("Add")]))]));
    });
-   var configPanel = F3(function (_p3,_p2,actionAddress) {
-      var _p4 = _p3;
-      var _p5 = _p2;
-      var repositoryItems = A2($List.map,repositoryItem(actionAddress),_p4.repositories);
-      var apiKeyValue = A2($Maybe.withDefault,"",_p4.apiKey);
+   var configPanel = F3(function (_p4,_p3,actionAddress) {
+      var _p5 = _p4;
+      var _p6 = _p3;
+      var repositoryItems = A2($List.map,repositoryItem(actionAddress),_p5.repositories);
+      var usePrivateTravis = $Util.isJust(_p5.apiKey);
       return _U.list([A2($Html.div,
       _U.list([$Html$Attributes.$class("config-panel")]),
       _U.list([A2($Html.h2,_U.list([]),_U.list([$Html.text("Configuration")]))
               ,A2($Html.h3,_U.list([]),_U.list([$Html.text("Repositories")]))
               ,A2($Html.ul,_U.list([$Html$Attributes.$class("config-repository-list")]),repositoryItems)
-              ,A2(addRepository,_p5.repositorySlug,actionAddress)
+              ,A2(addRepository,_p6.repositorySlug,actionAddress)
               ,A2($Html.h3,_U.list([]),_U.list([$Html.text("API")]))
-              ,A2(addApiKey,apiKeyValue,actionAddress)
+              ,A3(addApiKey,usePrivateTravis,_p6.apiKeyValue,actionAddress)
               ,attributions]))]);
    });
-   var branchElems = function (_p6) {
-      var _p7 = _p6;
-      return _U.list([A2($Html.span,_U.list([$Html$Attributes.$class("branch-name")]),_U.list([$Html.text(_p7.branch)]))]);
+   var branchElems = function (_p7) {
+      var _p8 = _p7;
+      return _U.list([A2($Html.span,_U.list([$Html$Attributes.$class("branch-name")]),_U.list([$Html.text(_p8.branch)]))]);
    };
    var asListItem = function (s) {    return A2($Html.li,_U.list([$Html$Attributes.$class(A2($Basics._op["++"],"branch ",s.state))]),branchElems(s));};
-   var buildRepositoryListing = function (_p8) {
-      var _p9 = _p8;
-      var repoDisplayName = displayableRepoName(_p9._0);
+   var buildRepositoryListing = function (_p9) {
+      var _p10 = _p9;
+      var repoDisplayName = displayableRepoName(_p10._0);
       var headerItem = A2($Html.li,_U.list([$Html$Attributes.$class("repository-heading")]),_U.list([$Html.text(repoDisplayName)]));
       return $Util.singleton(A2($Html.ul,
       _U.list([$Html$Attributes.$class("branch-list")]),
-      A2(F2(function (x,y) {    return A2($List._op["::"],x,y);}),headerItem,A2($List.map,asListItem,A2($List.take,5,_p9._1)))));
+      A2(F2(function (x,y) {    return A2($List._op["::"],x,y);}),headerItem,A2($List.map,asListItem,A2($List.take,5,_p10._1)))));
    };
    var buildRadiatorListing = function (statuses) {
       var asBuildListing = function (repoStatus) {
@@ -11268,8 +11283,8 @@ Elm.RadiatorView.make = function (_elm) {
    };
    var view = F2(function (actionAddress,model) {
       var configMarkup = function () {
-         var _p10 = model.mode;
-         if (_p10.ctor === "Config") {
+         var _p11 = model.mode;
+         if (_p11.ctor === "Config") {
                return A3(configPanel,model.configuration,model.configPanel,actionAddress);
             } else {
                return _U.list([]);
@@ -11353,12 +11368,18 @@ Elm.RadiatorUpdate.make = function (_elm) {
            var updatedConfig = _U.update(currentConfig,{repositories: newRepositories});
            var updatedModel = _U.update(model,{configuration: updatedConfig});
            return {ctor: "_Tuple2",_0: updatedModel,_1: refreshBuilds(updatedConfig)};
+         case "TogglePrivateTravis": var currentConfig = model.configuration;
+           var cfgPanel = model.configPanel;
+           var newApiKey = _p10._0 ? $Maybe.Just(cfgPanel.apiKeyValue) : $Maybe.Nothing;
+           var updatedConfig = _U.update(currentConfig,{apiKey: newApiKey});
+           var updatedModel = _U.update(model,{configuration: updatedConfig});
+           return {ctor: "_Tuple2",_0: updatedModel,_1: refreshBuilds(updatedModel.configuration)};
          case "UpdateApiKeyField": var cfg = model.configPanel;
-           var configView = _U.update(cfg,{apiKey: _p10._0});
+           var configView = _U.update(cfg,{apiKeyValue: _p10._0});
            return {ctor: "_Tuple2",_0: _U.update(model,{configPanel: configView}),_1: $Effects.none};
          case "SaveApiKey": var cfgPanel = model.configPanel;
            var cfg = model.configuration;
-           var updatedCfg = _U.update(cfg,{apiKey: $Maybe.Just(cfgPanel.apiKey)});
+           var updatedCfg = _U.update(cfg,{apiKey: $Maybe.Just(cfgPanel.apiKeyValue)});
            var updatedModel = _U.update(model,{configuration: updatedCfg});
            return {ctor: "_Tuple2",_0: updatedModel,_1: refreshBuilds(updatedModel.configuration)};
          default: return {ctor: "_Tuple2"
@@ -11402,7 +11423,7 @@ Elm.RadiatorApp.make = function (_elm) {
       v));
    });
    var timedUpdate = A2($Signal.map,function (_p0) {    return $RadiatorModel.RefreshBuilds;},$Time.every(30 * $Time.second));
-   var initialConfigPanel = {repositorySlug: "",apiKey: ""};
+   var initialConfigPanel = {repositorySlug: "",apiKeyValue: ""};
    var defaultConfig = {apiKey: $Maybe.Nothing,repositories: _U.list(["elm-lang/elm-compiler","elm-lang/core"])};
    var config = A2($Maybe.withDefault,defaultConfig,loadConfiguration);
    var initialModel = A4($RadiatorModel.Model,$RadiatorModel.Config,config,initialConfigPanel,_U.list([]));

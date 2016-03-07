@@ -41,15 +41,25 @@ update action model =
            updatedModel = { model | configuration = updatedConfig }
        in (updatedModel, refreshBuilds updatedConfig)
 
+     TogglePrivateTravis usePrivateTravis ->
+       let cfgPanel = model.configPanel
+           currentConfig = model.configuration
+           newApiKey = if usePrivateTravis 
+                         then Just cfgPanel.apiKeyValue
+                         else Nothing
+           updatedConfig = { currentConfig | apiKey = newApiKey }
+           updatedModel = { model | configuration = updatedConfig }
+       in (updatedModel, refreshBuilds updatedModel.configuration)
+
      UpdateApiKeyField key ->
        let cfg = model.configPanel
-           configView = { cfg | apiKey = key }
+           configView = { cfg | apiKeyValue = key }
        in ({ model | configPanel = configView }, Effects.none)
 
      SaveApiKey -> 
        let cfg = model.configuration
            cfgPanel = model.configPanel
-           updatedCfg = {cfg | apiKey = (Just cfgPanel.apiKey)}
+           updatedCfg = {cfg | apiKey = (Just cfgPanel.apiKeyValue)}
            updatedModel = {model | configuration = updatedCfg}
        in (updatedModel, refreshBuilds updatedModel.configuration)
 

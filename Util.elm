@@ -1,8 +1,13 @@
-module Util(sequence, singleton) where
+module Util(isJust, sequence, singleton) where
 
 import Maybe
 import List
 import Trampoline exposing (..)
+
+isJust: Maybe a -> Bool
+isJust m = case m of
+  Just _ -> True
+  Nothing -> False
 
 singleton: a -> List a
 singleton x = [x]
