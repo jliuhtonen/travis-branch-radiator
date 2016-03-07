@@ -23,7 +23,7 @@ ul {
 }
 
 .repository-item:not(:first-child) {
-  border-left: 2px solid #002b36;
+  border-left: 1px solid #002b36;
 }
 
 .branch-list {
@@ -55,7 +55,6 @@ ul {
 }
 
 .branch:not(:first-child) {
-  border-top: 2px solid #002b36;
 }
 
 .branch-name {
@@ -66,27 +65,27 @@ ul {
 }
 
 .created {
-  background-color: #268bd2;
+  background-color: #2980b9;
 }
 
 .passed {
-  background-color: #859900;
+  background-color: #27ae60;
 }
 
 .started {
-  background-color: #2aa198;
+  background-color: #16a085;
 }
 
 .errored {
-  background-color: #dc322f;
+  background-color: #c0392b;
 }
 
 .failed {
-  background-color: #b58900;
+  background-color: #f39c12;
 }
 
 .canceled {
-  background-color: #93a1a1;
+  background-color: #bdc3c7;
 }
 
 .config-button {
