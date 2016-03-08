@@ -65,23 +65,23 @@ ul {
 }
 
 .created {
-  background-color: #2980b9;
+  background-color: #cfcfc4;
 }
 
 .passed {
-  background-color: #27ae60;
+  background-color: #90ee90;
 }
 
 .started {
-  background-color: #16a085;
+  background-color: #2980b9;
 }
 
 .errored {
-  background-color: #c0392b;
+  background-color: #ff6961;
 }
 
 .failed {
-  background-color: #f39c12;
+  background-color: #fdfd96;
 }
 
 .canceled {
