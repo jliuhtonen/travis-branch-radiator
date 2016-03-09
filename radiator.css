@@ -111,10 +111,10 @@ ul {
   line-height: 40px;
   vertical-align: middle;
   position: fixed;
-  left: 50%;
-  top: 50%;
-  max-width: 400px;
-  margin: -200px 0 0 -200px;
+  max-width: 640px;
+  max-height: 480px;
+  margin: auto auto;
+  top: 0; left: 0; right: 0; bottom: 0;
   padding: 25px 50px;
   z-index: 20;
 }
@@ -130,8 +130,9 @@ ul {
   font-size: 15px;
 }
 
-.config-panel input {
+.config-panel input[type=text] {
   height: 40px;
+  flex: 2 1;
 }
 
 .config-panel button {
@@ -143,6 +144,13 @@ ul {
 
 .config-panel label {
   display: block;
+  flex: 1 1;
+  margin-right: 10px;
+}
+
+.config-panel-control-row {
+  display: flex;
+  align-items: center;
 }
 
 .config-repository-list {

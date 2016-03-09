@@ -11203,49 +11203,59 @@ Elm.RadiatorView.make = function (_elm) {
               _U.list([$Html$Attributes.$class("remove-repository-icon"),$Html$Attributes.src("close-circular-button.svg")]),
               _U.list([]))]))]));
    });
-   var addApiKey = F3(function (usePrivateTravis,apiKey,actionAddress) {
+   var apiKeyInput = F2(function (apiKey,actionAddress) {
       return A2($Html.div,
-      _U.list([$Html$Attributes.$class("config-panel-control")]),
-      _U.list([A2($Html.label,_U.list([$Html$Attributes.$for("use-private-travis-checkbox")]),_U.list([$Html.text("Use private Travis")]))
-              ,A2($Html.input,
+      _U.list([]),
+      _U.list([A2($Html.label,_U.list([$Html$Attributes.$for("api-key-field")]),_U.list([$Html.text("Private Travis API key:")]))
+              ,A2($Html.div,
+              _U.list([$Html$Attributes.$class("config-panel-control-row")]),
+              _U.list([A2($Html.input,
+                      _U.list([$Html$Attributes.type$("text")
+                              ,$Html$Attributes.id("api-key-field")
+                              ,$Html$Attributes.value(apiKey)
+                              ,A3($Html$Events.on,
+                              "input",
+                              $Html$Events.targetValue,
+                              function (_p0) {
+                                 return A2($Signal.message,actionAddress,$RadiatorModel.UpdateApiKeyField(_p0));
+                              })]),
+                      _U.list([]))
+                      ,A2($Html.button,_U.list([A2($Html$Events.onClick,actionAddress,$RadiatorModel.SaveApiKey)]),_U.list([$Html.text("Set")]))]))]));
+   });
+   var usePrivateTravisInput = F2(function ($private,actionAddress) {
+      return A2($Html.div,
+      _U.list([$Html$Attributes.$class("config-panel-control-row")]),
+      _U.list([A2($Html.input,
               _U.list([$Html$Attributes.id("use-private-travis-checkbox")
                       ,$Html$Attributes.type$("checkbox")
-                      ,$Html$Attributes.checked(usePrivateTravis)
+                      ,$Html$Attributes.checked($private)
                       ,A3($Html$Events.on,
                       "change",
                       $Html$Events.targetChecked,
-                      function (_p0) {
-                         return A2($Signal.message,actionAddress,$RadiatorModel.TogglePrivateTravis(_p0));
-                      })]),
-              _U.list([]))
-              ,A2($Html.label,_U.list([$Html$Attributes.$for("api-key-field")]),_U.list([$Html.text("Private Travis API key:")]))
-              ,A2($Html.input,
-              _U.list([$Html$Attributes.id("api-key-field")
-                      ,$Html$Attributes.value(apiKey)
-                      ,A3($Html$Events.on,
-                      "input",
-                      $Html$Events.targetValue,
                       function (_p1) {
-                         return A2($Signal.message,actionAddress,$RadiatorModel.UpdateApiKeyField(_p1));
+                         return A2($Signal.message,actionAddress,$RadiatorModel.TogglePrivateTravis(_p1));
                       })]),
               _U.list([]))
-              ,A2($Html.button,_U.list([A2($Html$Events.onClick,actionAddress,$RadiatorModel.SaveApiKey)]),_U.list([$Html.text("Set")]))]));
+              ,A2($Html.label,_U.list([$Html$Attributes.$for("use-private-travis-checkbox")]),_U.list([$Html.text("Use private Travis")]))]));
    });
-   var addRepository = F2(function (repositorySlug,address) {
+   var repositoryInput = F2(function (repositorySlug,address) {
       return A2($Html.div,
-      _U.list([$Html$Attributes.$class("config-panel-control")]),
+      _U.list([]),
       _U.list([A2($Html.label,_U.list([$Html$Attributes.$for("add-repository")]),_U.list([$Html.text("Add a new repository")]))
-              ,A2($Html.input,
-              _U.list([$Html$Attributes.id("add-repository")
-                      ,$Html$Attributes.value(repositorySlug)
-                      ,A3($Html$Events.on,
-                      "input",
-                      $Html$Events.targetValue,
-                      function (_p2) {
-                         return A2($Signal.message,address,$RadiatorModel.UpdateRepositoryField(_p2));
-                      })]),
-              _U.list([]))
-              ,A2($Html.button,_U.list([A2($Html$Events.onClick,address,$RadiatorModel.AddRepository)]),_U.list([$Html.text("Add")]))]));
+              ,A2($Html.div,
+              _U.list([$Html$Attributes.$class("config-panel-control-row")]),
+              _U.list([A2($Html.input,
+                      _U.list([$Html$Attributes.type$("text")
+                              ,$Html$Attributes.id("add-repository")
+                              ,$Html$Attributes.value(repositorySlug)
+                              ,A3($Html$Events.on,
+                              "input",
+                              $Html$Events.targetValue,
+                              function (_p2) {
+                                 return A2($Signal.message,address,$RadiatorModel.UpdateRepositoryField(_p2));
+                              })]),
+                      _U.list([]))
+                      ,A2($Html.button,_U.list([A2($Html$Events.onClick,address,$RadiatorModel.AddRepository)]),_U.list([$Html.text("Add")]))]))]));
    });
    var configPanel = F3(function (_p4,_p3,actionAddress) {
       var _p5 = _p4;
@@ -11257,9 +11267,10 @@ Elm.RadiatorView.make = function (_elm) {
       _U.list([A2($Html.h2,_U.list([]),_U.list([$Html.text("Configuration")]))
               ,A2($Html.h3,_U.list([]),_U.list([$Html.text("Repositories")]))
               ,A2($Html.ul,_U.list([$Html$Attributes.$class("config-repository-list")]),repositoryItems)
-              ,A2(addRepository,_p6.repositorySlug,actionAddress)
+              ,A2(repositoryInput,_p6.repositorySlug,actionAddress)
               ,A2($Html.h3,_U.list([]),_U.list([$Html.text("API")]))
-              ,A3(addApiKey,usePrivateTravis,_p6.apiKeyValue,actionAddress)
+              ,A2(usePrivateTravisInput,usePrivateTravis,actionAddress)
+              ,A2(apiKeyInput,_p6.apiKeyValue,actionAddress)
               ,attributions]))]);
    });
    var branchElems = function (_p7) {

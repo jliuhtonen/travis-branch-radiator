@@ -58,32 +58,40 @@ configPanel { repositories, apiKey } { repositorySlug, apiKeyValue } actionAddre
        Html.h2 [] [Html.text "Configuration"],
        Html.h3 [] [Html.text "Repositories"],
        Html.ul [class "config-repository-list"] repositoryItems,
-       addRepository repositorySlug actionAddress,
+       repositoryInput repositorySlug actionAddress,
        Html.h3 [] [Html.text "API"],
-       addApiKey usePrivateTravis apiKeyValue actionAddress,
+       usePrivateTravisInput usePrivateTravis actionAddress,
+       apiKeyInput apiKeyValue actionAddress,
        attributions
        ]]
 
-addRepository: String -> Signal.Address Action -> Html
-addRepository repositorySlug address =
-  Html.div [class "config-panel-control"] [
+repositoryInput: String -> Signal.Address Action -> Html
+repositoryInput repositorySlug address =
+  Html.div [] [
     Html.label [for "add-repository"] [Html.text "Add a new repository"],
-    Html.input [id "add-repository", value repositorySlug, Html.Events.on "input" Html.Events.targetValue (Signal.message address << UpdateRepositoryField)] [] ,
-    Html.button [onClick address AddRepository] [Html.text "Add"]
-  ]
+    Html.div [class "config-panel-control-row"] [
+      Html.input [Html.Attributes.type' "text", id "add-repository", value repositorySlug, Html.Events.on "input" Html.Events.targetValue (Signal.message address << UpdateRepositoryField)] [] ,
+      Html.button [onClick address AddRepository] [Html.text "Add"]
+      ]]
 
-addApiKey: Bool -> String -> Signal.Address Action -> Html
-addApiKey usePrivateTravis apiKey actionAddress =
-  Html.div [class "config-panel-control"] [
-    Html.label [for "use-private-travis-checkbox"] [Html.text "Use private Travis"],
+usePrivateTravisInput: Bool -> Signal.Address Action -> Html
+usePrivateTravisInput private actionAddress =
+  Html.div [class "config-panel-control-row"] [
     Html.input [Html.Attributes.id "use-private-travis-checkbox", 
         Html.Attributes.type' "checkbox", 
-        Html.Attributes.checked usePrivateTravis,
+        Html.Attributes.checked private,
         Html.Events.on "change" Html.Events.targetChecked (Signal.message actionAddress << TogglePrivateTravis)] [],
-    Html.label [for "api-key-field"] [Html.text "Private Travis API key:"],
-    Html.input [id "api-key-field", value apiKey, Html.Events.on "input" Html.Events.targetValue (Signal.message actionAddress << UpdateApiKeyField)] [],
-    Html.button [onClick actionAddress SaveApiKey] [ Html.text "Set" ]
+    Html.label [for "use-private-travis-checkbox"] [Html.text "Use private Travis"]
     ]
+
+apiKeyInput: String -> Signal.Address Action -> Html
+apiKeyInput apiKey actionAddress =
+  Html.div [] [
+    Html.label [for "api-key-field"] [Html.text "Private Travis API key:"],
+    Html.div [class "config-panel-control-row"] [
+      Html.input [Html.Attributes.type' "text", id "api-key-field", value apiKey, Html.Events.on "input" Html.Events.targetValue (Signal.message actionAddress << UpdateApiKeyField)] [],
+      Html.button [onClick actionAddress SaveApiKey] [ Html.text "Set" ]
+      ]]
 
 repositoryItem: Signal.Address Action -> String -> Html
 repositoryItem address repoName =
