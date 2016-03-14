@@ -11185,9 +11185,9 @@ Elm.RadiatorView.make = function (_elm) {
    var _op = {};
    var attributions = A2($Html.div,
    _U.list([$Html$Attributes.$class("attributions")]),
-   _U.list([$Html.text("Icons made by")
+   _U.list([$Html.text("Icons made by ")
            ,A2($Html.a,_U.list([$Html$Attributes.href("http://www.flaticon.com/authors/robin-kylander")]),_U.list([$Html.text("Robin Kylander")]))
-           ,$Html.text(" from www.flaticon.com is licensed by CC 3.0 BY")]));
+           ,$Html.text(" from www.flaticon.com are licensed by CC 3.0 BY")]));
    var displayableRepoName = function (name) {
       var nameParts = A2($String.split,"/",name);
       return _U.cmp($List.length(nameParts),1) > 0 ? A2($Maybe.withDefault,name,$List.head(A2($List.drop,1,nameParts))) : name;
@@ -11264,7 +11264,10 @@ Elm.RadiatorView.make = function (_elm) {
       var usePrivateTravis = $Util.isJust(_p5.apiKey);
       return _U.list([A2($Html.div,
       _U.list([$Html$Attributes.$class("config-panel")]),
-      _U.list([A2($Html.h2,_U.list([]),_U.list([$Html.text("Configuration")]))
+      _U.list([A2($Html.button,
+              _U.list([$Html$Attributes.$class("config-close-button"),A2($Html$Events.onClick,actionAddress,$RadiatorModel.FlipConfigMode)]),
+              _U.list([]))
+              ,A2($Html.h2,_U.list([]),_U.list([$Html.text("Configuration")]))
               ,A2($Html.h3,_U.list([]),_U.list([$Html.text("Repositories")]))
               ,A2($Html.ul,_U.list([$Html$Attributes.$class("config-repository-list")]),repositoryItems)
               ,A2(repositoryInput,_p6.repositorySlug,actionAddress)

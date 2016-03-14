@@ -10,6 +10,10 @@ ul {
   padding: 0;
 }
 
+a, a:visited {
+  color: #fdf6e3;
+}
+
 .repository-listing {
   position: fixed;
   top: 0; right: 0; bottom: 0; left: 0;
@@ -90,7 +94,7 @@ ul {
 
 .config-button {
   background-color: transparent;
-  background-image: url('iconmonstr-gear-10.svg');
+  background-image: url('tool.svg');
   background-repeat: none;
   background-size: contain;
   border: 0;
@@ -179,4 +183,15 @@ ul {
   font-size: 12px;
   line-height: 2em;
   margin-top: 50px;
+}
+
+button.config-close-button {
+  background-color: transparent;
+  background-image: url('circle-white.svg');
+  background-size: 100%;
+  border: 0;
+  cursor: pointer;
+  position: absolute;
+  top: 15px; right: 15px;
+  width: 45px; height: 45px;
 }

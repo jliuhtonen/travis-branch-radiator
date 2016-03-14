@@ -55,6 +55,8 @@ configPanel { repositories, apiKey } { repositorySlug, apiKeyValue } actionAddre
       repositoryItems = List.map (repositoryItem actionAddress) repositories
   in 
      [Html.div [class "config-panel"] [
+       Html.button [class "config-close-button",
+         onClick actionAddress FlipConfigMode] [] ,
        Html.h2 [] [Html.text "Configuration"],
        Html.h3 [] [Html.text "Repositories"],
        Html.ul [class "config-repository-list"] repositoryItems,
@@ -113,7 +115,7 @@ displayableRepoName name =
 attributions: Html
 attributions =
   Html.div [class "attributions"] [
-    Html.text "Icons made by",
+    Html.text "Icons made by ",
     Html.a [Html.Attributes.href "http://www.flaticon.com/authors/robin-kylander"] [Html.text "Robin Kylander"],
-    Html.text " from www.flaticon.com is licensed by CC 3.0 BY"
+    Html.text " from www.flaticon.com are licensed by CC 3.0 BY"
     ]
