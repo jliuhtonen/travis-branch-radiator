@@ -18,8 +18,9 @@ a, a:visited {
   position: fixed;
   top: 0; right: 0; bottom: 0; left: 0;
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   flex-direction: row;
+  overflow: scroll;
 }
 
 .repository-item {
