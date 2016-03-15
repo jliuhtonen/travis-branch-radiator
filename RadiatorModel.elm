@@ -2,6 +2,7 @@ module RadiatorModel where
 
 import Travis
 
+
 type Action = RefreshBuilds 
             | NewBuildStatus (Maybe (List (String, Travis.BranchStatus)))
             | FlipConfigMode 
@@ -13,6 +14,7 @@ type Action = RefreshBuilds
             | SaveApiKey
             | SaveConfiguration
 
+
 type alias Model = {
   mode: AppMode,
   configuration: Configuration,
@@ -20,21 +22,26 @@ type alias Model = {
   buildStatus : List RepositoryStatus
 }
 
+
 type alias RepositoryStatus = (String, List BuildStatus)
+
 
 type alias Configuration = {
   apiKey: Maybe String,
   repositories: List String
 }
 
+
 type alias ConfigPanel = {
   repositorySlug: String,
   apiKeyValue: String
 }
 
+
 type alias BuildStatus = {
   branch : String,
   state : String
 }
+
 
 type AppMode = Monitoring | Config

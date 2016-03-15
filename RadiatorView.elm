@@ -8,53 +8,51 @@ import Html.Events as E
 import RadiatorModel exposing (..)
 import Util
 
+
 view: Signal.Address Action -> Model -> Html
 view actionAddress model =
-  let
-     configMarkup = case model.mode of
-       Config -> configPanel model.configuration model.configPanel actionAddress 
-       _ -> []
-  in
-     H.div [] [
+  let configMarkup = case model.mode of
+    Config -> configPanel model.configuration model.configPanel actionAddress 
+    _ -> []
+  in H.div [] [
        H.button [A.class "config-button", E.onClick actionAddress FlipConfigMode] [],
        H.div [] configMarkup,
        buildRadiatorListing model.buildStatus
        ] 
 
+
 buildRadiatorListing: List RepositoryStatus -> Html
 buildRadiatorListing statuses =
-  let
-      asBuildListing repoStatus = H.li [A.class "repository-item"] (buildRepositoryListing repoStatus)
-  in
-     H.ul [A.class "repository-listing"] (List.map asBuildListing statuses)
+  let asBuildListing repoStatus = H.li [A.class "repository-item"] (buildRepositoryListing repoStatus)
+  in H.ul [A.class "repository-listing"] (List.map asBuildListing statuses)
+
 
 buildRepositoryListing: RepositoryStatus -> List Html
 buildRepositoryListing (repositoryName, buildStatuses) =
-  let 
-      repoDisplayName = displayableRepoName repositoryName
+  let repoDisplayName = displayableRepoName repositoryName
       headerItem = H.li [A.class "repository-heading"] [H.text repoDisplayName]
-  in 
-     List.take 5 buildStatuses
+  in List.take 5 buildStatuses
      |> List.map asListItem
      |> (::) headerItem
      |> H.ul [A.class "branch-list"]
      |> Util.singleton
 
+
 asListItem: BuildStatus -> Html
 asListItem s = H.li [A.class ("branch " ++ s.state)] (branchElems s) 
+
 
 branchElems: BuildStatus -> List Html
 branchElems { branch } = [
     (H.span [A.class "branch-name"] [H.text branch])
   ]
 
+
 configPanel: Configuration -> ConfigPanel -> Signal.Address Action -> List Html
 configPanel { repositories, apiKey } { repositorySlug, apiKeyValue } actionAddress = 
-  let
-      usePrivateTravis = Util.isJust apiKey
+  let usePrivateTravis = Util.isJust apiKey
       repositoryItems = List.map (repositoryItem actionAddress) repositories
-  in 
-     [H.div [A.class "config-panel"] [
+  in [H.div [A.class "config-panel"] [
        H.button [A.class "config-close-button",
          E.onClick actionAddress FlipConfigMode] [] ,
        H.h2 [] [H.text "Configuration"],
@@ -67,6 +65,7 @@ configPanel { repositories, apiKey } { repositorySlug, apiKeyValue } actionAddre
        attributions
        ]]
 
+
 repositoryInput: String -> Signal.Address Action -> Html
 repositoryInput repositorySlug address =
   H.div [] [
@@ -75,6 +74,7 @@ repositoryInput repositorySlug address =
       H.input [A.type' "text", A.id "add-repository", A.value repositorySlug, E.on "input" E.targetValue (Signal.message address << UpdateRepositoryField)] [] ,
       H.button [E.onClick address AddRepository] [H.text "Add"]
       ]]
+
 
 usePrivateTravisInput: Bool -> Signal.Address Action -> Html
 usePrivateTravisInput private actionAddress =
@@ -86,6 +86,7 @@ usePrivateTravisInput private actionAddress =
     H.label [A.for "use-private-travis-checkbox"] [H.text "Use private Travis"]
     ]
 
+
 apiKeyInput: String -> Signal.Address Action -> Html
 apiKeyInput apiKey actionAddress =
   H.div [] [
@@ -95,6 +96,7 @@ apiKeyInput apiKey actionAddress =
       H.button [E.onClick actionAddress SaveApiKey] [ H.text "Set" ]
       ]]
 
+
 repositoryItem: Signal.Address Action -> String -> Html
 repositoryItem address repoName =
   let clickOptions = { preventDefault = True, stopPropagation = False }
@@ -102,6 +104,7 @@ repositoryItem address repoName =
     H.span [] [H.text repoName],
     H.a [E.onClick address (RemoveRepository repoName), A.href "#"] [H.img [A.class "remove-repository-icon", A.src "close-circular-button.svg"] []]
     ]
+
 
 displayableRepoName: String -> String
 displayableRepoName name =
@@ -111,6 +114,7 @@ displayableRepoName name =
           |> List.head
           |> Maybe.withDefault name
      else name
+
 
 attributions: Html
 attributions =

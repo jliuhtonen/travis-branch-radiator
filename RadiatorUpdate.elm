@@ -57,23 +57,28 @@ update action model =
      SaveConfiguration -> ({ model | configuration = model.configuration, 
         mode = Monitoring }, (refreshBuilds model.configuration))
 
+
 updateConfig: (Configuration -> Configuration) -> Model -> (Model, Effects Action)
 updateConfig f model =
   let cfg = model.configuration
       updatedModel = { model | configuration = f cfg }
   in (updatedModel, refreshBuilds updatedModel.configuration)
 
+
 refreshModelBuildState: List (String, Travis.BranchStatus) -> Model -> Model 
 refreshModelBuildState updatedBranchStatuses model =
   let updatedBuildStatuses = List.map toBuildStatusList updatedBranchStatuses
   in { model | buildStatus = updatedBuildStatuses }
 
+
 toBuildStatusList: (String, Travis.BranchStatus) -> (String, List BuildStatus)
 toBuildStatusList (repositoryName, {branches, commits}) = 
   (repositoryName, List.map2 combineAsBuildStatus branches commits)
 
+
 combineAsBuildStatus: Travis.BranchBuild -> Travis.Commit -> BuildStatus
 combineAsBuildStatus { state } { branch } = { state = state, branch = branch }
+
 
 refreshBuilds : Configuration -> Effects Action 
 refreshBuilds { apiKey, repositories } =
@@ -83,8 +88,8 @@ refreshBuilds { apiKey, repositories } =
         |> Task.map (NewBuildStatus << Util.sequence)
         |> Effects.task
 
+
 flipAppMode: AppMode -> AppMode
 flipAppMode mode = case mode of 
   Monitoring -> Config
   Config -> Monitoring
-
