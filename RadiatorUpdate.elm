@@ -13,13 +13,15 @@ import Debug
 update : Action -> Model -> (Model, Effects Action)
 update action model =
   case action of
-     RefreshBuilds -> (model, (refreshBuilds model.configuration))
+     RefreshBuilds ->
+       (model, refreshBuilds model.configuration)
 
-     NewBuildStatus (Just builds) -> ((refreshModelBuildState builds model), Effects.none)
+     NewBuildStatus (Just builds) ->
+       (refreshModelBuildState builds model, Effects.none)
 
      NewBuildStatus Nothing -> (model, Effects.none)
 
-     FlipConfigMode -> 
+     FlipConfigMode ->
        ({ model | mode = (flipAppMode model.mode) }, Effects.none)
 
      UpdateRepositoryField repository ->
@@ -75,10 +77,8 @@ combineAsBuildStatus { state } { branch } = { state = state, branch = branch }
 
 refreshBuilds : Configuration -> Effects Action 
 refreshBuilds { apiKey, repositories } =
-  let 
-      repositoryTasks repository = Travis.getBranchBuildStatus apiKey repository
-  in
-     List.map repositoryTasks repositories 
+  let repositoryTasks repository = Travis.getBranchBuildStatus apiKey repository
+  in List.map repositoryTasks repositories
         |> Task.sequence
         |> Task.map (NewBuildStatus << Util.sequence)
         |> Effects.task
