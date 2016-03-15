@@ -35,21 +35,14 @@ update action model =
        in (updatedModel, refreshBuilds updatedModel.configuration) 
 
      RemoveRepository repository ->
-       let currentConfig = model.configuration
-           newRepositories = List.filter (\r -> r /= repository) currentConfig.repositories
-           updatedConfig = { currentConfig | repositories = newRepositories }
-           updatedModel = { model | configuration = updatedConfig }
-       in (updatedModel, refreshBuilds updatedConfig)
+       let newRepositories = List.filter (\r -> r /= repository) model.configuration.repositories
+       in updateConfig (\cfg -> { cfg | repositories = newRepositories }) model
 
      TogglePrivateTravis usePrivateTravis ->
-       let cfgPanel = model.configPanel
-           currentConfig = model.configuration
-           newApiKey = if usePrivateTravis 
-                         then Just cfgPanel.apiKeyValue
+       let newApiKey = if usePrivateTravis 
+                         then Just model.configPanel.apiKeyValue
                          else Nothing
-           updatedConfig = { currentConfig | apiKey = newApiKey }
-           updatedModel = { model | configuration = updatedConfig }
-       in (updatedModel, refreshBuilds updatedModel.configuration)
+       in updateConfig (\cfg -> { cfg | apiKey = newApiKey }) model
 
      UpdateApiKeyField key ->
        let cfg = model.configPanel
@@ -57,15 +50,16 @@ update action model =
        in ({ model | configPanel = configView }, Effects.none)
 
      SaveApiKey -> 
-       let cfg = model.configuration
-           cfgPanel = model.configPanel
-           updatedCfg = {cfg | apiKey = (Just cfgPanel.apiKeyValue)}
-           updatedModel = {model | configuration = updatedCfg}
-       in (updatedModel, refreshBuilds updatedModel.configuration)
+       updateConfig (\cfg -> {cfg | apiKey = (Just model.configPanel.apiKeyValue)}) model
 
      SaveConfiguration -> ({ model | configuration = model.configuration, 
         mode = Monitoring }, (refreshBuilds model.configuration))
 
+updateConfig: (Configuration -> Configuration) -> Model -> (Model, Effects Action)
+updateConfig f model =
+  let cfg = model.configuration
+      updatedModel = { model | configuration = f cfg }
+  in (updatedModel, refreshBuilds updatedModel.configuration)
 
 refreshModelBuildState: List (String, Travis.BranchStatus) -> Model -> Model 
 refreshModelBuildState updatedBranchStatuses model =

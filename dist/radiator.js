@@ -11358,6 +11358,11 @@ Elm.RadiatorUpdate.make = function (_elm) {
       var updatedBuildStatuses = A2($List.map,toBuildStatusList,updatedBranchStatuses);
       return _U.update(model,{buildStatus: updatedBuildStatuses});
    });
+   var updateConfig = F2(function (f,model) {
+      var cfg = model.configuration;
+      var updatedModel = _U.update(model,{configuration: f(cfg)});
+      return {ctor: "_Tuple2",_0: updatedModel,_1: refreshBuilds(updatedModel.configuration)};
+   });
    var update = F2(function (action,model) {
       var _p10 = action;
       switch (_p10.ctor)
@@ -11377,25 +11382,14 @@ Elm.RadiatorUpdate.make = function (_elm) {
            var updatedModel = _U.update(model,
            {configuration: _U.update(currentConfig,{repositories: updatedRepositories}),configPanel: _U.update(cfgPanel,{repositorySlug: ""})});
            return {ctor: "_Tuple2",_0: updatedModel,_1: refreshBuilds(updatedModel.configuration)};
-         case "RemoveRepository": var currentConfig = model.configuration;
-           var newRepositories = A2($List.filter,function (r) {    return !_U.eq(r,_p10._0);},currentConfig.repositories);
-           var updatedConfig = _U.update(currentConfig,{repositories: newRepositories});
-           var updatedModel = _U.update(model,{configuration: updatedConfig});
-           return {ctor: "_Tuple2",_0: updatedModel,_1: refreshBuilds(updatedConfig)};
-         case "TogglePrivateTravis": var currentConfig = model.configuration;
-           var cfgPanel = model.configPanel;
-           var newApiKey = _p10._0 ? $Maybe.Just(cfgPanel.apiKeyValue) : $Maybe.Nothing;
-           var updatedConfig = _U.update(currentConfig,{apiKey: newApiKey});
-           var updatedModel = _U.update(model,{configuration: updatedConfig});
-           return {ctor: "_Tuple2",_0: updatedModel,_1: refreshBuilds(updatedModel.configuration)};
+         case "RemoveRepository": var newRepositories = A2($List.filter,function (r) {    return !_U.eq(r,_p10._0);},model.configuration.repositories);
+           return A2(updateConfig,function (cfg) {    return _U.update(cfg,{repositories: newRepositories});},model);
+         case "TogglePrivateTravis": var newApiKey = _p10._0 ? $Maybe.Just(model.configPanel.apiKeyValue) : $Maybe.Nothing;
+           return A2(updateConfig,function (cfg) {    return _U.update(cfg,{apiKey: newApiKey});},model);
          case "UpdateApiKeyField": var cfg = model.configPanel;
            var configView = _U.update(cfg,{apiKeyValue: _p10._0});
            return {ctor: "_Tuple2",_0: _U.update(model,{configPanel: configView}),_1: $Effects.none};
-         case "SaveApiKey": var cfgPanel = model.configPanel;
-           var cfg = model.configuration;
-           var updatedCfg = _U.update(cfg,{apiKey: $Maybe.Just(cfgPanel.apiKeyValue)});
-           var updatedModel = _U.update(model,{configuration: updatedCfg});
-           return {ctor: "_Tuple2",_0: updatedModel,_1: refreshBuilds(updatedModel.configuration)};
+         case "SaveApiKey": return A2(updateConfig,function (cfg) {    return _U.update(cfg,{apiKey: $Maybe.Just(model.configPanel.apiKeyValue)});},model);
          default: return {ctor: "_Tuple2"
                          ,_0: _U.update(model,{configuration: model.configuration,mode: $RadiatorModel.Monitoring})
                          ,_1: refreshBuilds(model.configuration)};}
