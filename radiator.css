@@ -73,7 +73,7 @@ a, a:visited {
 }
 
 .passed {
-  background-color: #90ee90;
+  background-color: #61c654;
 }
 
 .started {
@@ -81,11 +81,11 @@ a, a:visited {
 }
 
 .errored {
-  background-color: #ff6961;
+  background-color: #ed6b5f;
 }
 
 .failed {
-  background-color: #fdfd96;
+  background-color: #f5bf4f;
 }
 
 .canceled {
