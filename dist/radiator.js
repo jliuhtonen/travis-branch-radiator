@@ -11074,10 +11074,10 @@ Elm.Travis.make = function (_elm) {
    });
    return _elm.Travis.values = {_op: _op
                                ,BranchStatus: BranchStatus
-                               ,decodeBranchStatus: decodeBranchStatus
                                ,BranchBuild: BranchBuild
-                               ,decodeBranchBuild: decodeBranchBuild
                                ,Commit: Commit
+                               ,decodeBranchStatus: decodeBranchStatus
+                               ,decodeBranchBuild: decodeBranchBuild
                                ,decodeCommit: decodeCommit
                                ,baseUrl: baseUrl
                                ,getBranchBuildStatus: getBranchBuildStatus
@@ -11431,9 +11431,9 @@ Elm.RadiatorApp.make = function (_elm) {
       v));
    });
    var timedUpdate = A2($Signal.map,function (_p0) {    return $RadiatorModel.RefreshBuilds;},$Time.every(30 * $Time.second));
-   var initialConfigPanel = {repositorySlug: "",apiKeyValue: ""};
    var defaultConfig = {apiKey: $Maybe.Nothing,repositories: _U.list(["elm-lang/elm-compiler","elm-lang/core"])};
    var config = A2($Maybe.withDefault,defaultConfig,loadConfiguration);
+   var initialConfigPanel = {repositorySlug: "",apiKeyValue: A2($Maybe.withDefault,"",config.apiKey)};
    var initialModel = A4($RadiatorModel.Model,$RadiatorModel.Config,config,initialConfigPanel,_U.list([]));
    var app = $StartApp.start({init: {ctor: "_Tuple2",_0: initialModel,_1: $RadiatorUpdate.refreshBuilds(config)}
                              ,view: $RadiatorView.view

@@ -8,13 +8,21 @@ import RadiatorModel as Model
 import RadiatorView as View
 import RadiatorUpdate as Update
 
-
 defaultConfig = { apiKey = Nothing, repositories =
   ["elm-lang/elm-compiler", "elm-lang/core"] }
 
 
+config: Model.Configuration
 config = Maybe.withDefault defaultConfig loadConfiguration
-initialConfigPanel = { repositorySlug = "", apiKeyValue = "" }
+
+initialConfigPanel: Model.ConfigPanel
+initialConfigPanel =
+  {
+    repositorySlug = "",
+    apiKeyValue = Maybe.withDefault "" config.apiKey
+  }
+
+
 initialModel = Model.Model Model.Config config initialConfigPanel []
 
 

@@ -7,7 +7,6 @@ import Effects exposing (Effects)
 import Travis
 import RadiatorModel as Model exposing (..)
 import Util
-import Debug
 
 
 update : Action -> Model -> (Model, Effects Action)
