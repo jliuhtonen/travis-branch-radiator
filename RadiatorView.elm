@@ -56,12 +56,16 @@ configPanel { repositories, apiKey } { repositorySlug, apiKeyValue } actionAddre
        H.button [A.class "config-close-button",
          E.onClick actionAddress FlipConfigMode] [] ,
        H.h2 [] [H.text "Configuration"],
-       H.h3 [] [H.text "Repositories"],
-       H.ul [A.class "config-repository-list"] repositoryItems,
-       repositoryInput repositorySlug actionAddress,
-       H.h3 [] [H.text "API"],
-       usePrivateTravisInput usePrivateTravis actionAddress,
-       apiKeyInput apiKeyValue actionAddress,
+       H.section [] [
+         H.h3 [] [H.text "Repositories"],
+         H.ul [A.class "config-repository-list"] repositoryItems,
+         repositoryInput repositorySlug actionAddress
+         ],
+       H.section [] [
+         H.h3 [] [H.text "API"],
+         usePrivateTravisInput usePrivateTravis actionAddress,
+         apiKeyInput apiKeyValue actionAddress
+         ],
        attributions
        ]]
 

@@ -11268,12 +11268,16 @@ Elm.RadiatorView.make = function (_elm) {
               _U.list([$Html$Attributes.$class("config-close-button"),A2($Html$Events.onClick,actionAddress,$RadiatorModel.FlipConfigMode)]),
               _U.list([]))
               ,A2($Html.h2,_U.list([]),_U.list([$Html.text("Configuration")]))
-              ,A2($Html.h3,_U.list([]),_U.list([$Html.text("Repositories")]))
-              ,A2($Html.ul,_U.list([$Html$Attributes.$class("config-repository-list")]),repositoryItems)
-              ,A2(repositoryInput,_p6.repositorySlug,actionAddress)
-              ,A2($Html.h3,_U.list([]),_U.list([$Html.text("API")]))
-              ,A2(usePrivateTravisInput,usePrivateTravis,actionAddress)
-              ,A2(apiKeyInput,_p6.apiKeyValue,actionAddress)
+              ,A2($Html.section,
+              _U.list([]),
+              _U.list([A2($Html.h3,_U.list([]),_U.list([$Html.text("Repositories")]))
+                      ,A2($Html.ul,_U.list([$Html$Attributes.$class("config-repository-list")]),repositoryItems)
+                      ,A2(repositoryInput,_p6.repositorySlug,actionAddress)]))
+              ,A2($Html.section,
+              _U.list([]),
+              _U.list([A2($Html.h3,_U.list([]),_U.list([$Html.text("API")]))
+                      ,A2(usePrivateTravisInput,usePrivateTravis,actionAddress)
+                      ,A2(apiKeyInput,_p6.apiKeyValue,actionAddress)]))
               ,attributions]))]);
    });
    var branchElems = function (_p7) {

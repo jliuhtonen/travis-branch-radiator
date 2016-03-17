@@ -2,6 +2,7 @@ body {
   color: #002b36;
   font-family: 'Open Sans', sans-serif;
   font-weight: 400;
+  background-color: #002b36;
 }
 
 ul {
@@ -44,8 +45,21 @@ a, a:visited {
   margin: auto;
   width: 100%;
   display: flex;
-  justify-content: center;
   align-items: center;
+  background-repeat: no-repeat;
+  background-position: left 5% center;
+  background-size: 8vh;
+}
+
+.branch::before {
+  content: ' ';
+  display: block;
+  flex: 0 0 auto;
+  background-size: contain;
+  width: 8vh; height: 8vh;
+  background-repeat: no-repeat;
+  background-position: right 5% center;
+  margin: 0 40px;
 }
 
 .repository-heading {
@@ -63,6 +77,7 @@ a, a:visited {
 }
 
 .branch-name {
+  flex: 2 1;
   font-family: 'Open Sans', sans-serif;
   font-weight: 600;
   font-size: 4vh;
@@ -73,20 +88,50 @@ a, a:visited {
   background-color: #cfcfc4;
 }
 
+@keyframes roll { 100% { transform: rotateZ(180deg) } }
+
 .passed {
   background-color: #61c654;
+}
+
+.passed::before {
+  background-image: url("sunny.svg");
+  animation: roll 60s infinite alternate linear;
 }
 
 .started {
   background-color: #2980b9;
 }
 
+@keyframes spinArrow {
+  10% {
+    transform: rotateZ(-50deg);
+  }
+
+  100% {
+    transform: rotateZ(720deg);
+  }
+}
+
+.started::before {
+  background-image: url("arrows.svg");
+  animation: spinArrow 5s infinite;
+}
+
 .errored {
   background-color: #ed6b5f;
 }
 
+.errored::before { 
+  background-image: url("thunder.svg");
+}
+
 .failed {
   background-color: #f5bf4f;
+}
+
+.failed::before {
+  background-image: url("cloud.svg");
 }
 
 .canceled {
@@ -117,11 +162,15 @@ a, a:visited {
   vertical-align: middle;
   position: fixed;
   max-width: 640px;
-  max-height: 480px;
+  max-height: 500px;
   margin: auto auto;
   top: 0; left: 0; right: 0; bottom: 0;
   padding: 25px 50px;
   z-index: 20;
+}
+
+.config-panel section {
+  margin-top: 15px;
 }
 
 .config-panel h2, .config-panel h3 {
