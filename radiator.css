@@ -96,42 +96,47 @@ a, a:visited {
 
 .passed::before {
   background-image: url("sunny.svg");
-  animation: roll 60s infinite alternate linear;
+  animation: roll 90s infinite alternate linear;
 }
 
 .started {
   background-color: #2980b9;
 }
 
-@keyframes spinArrow {
-  10% {
-    transform: rotateZ(-50deg);
-  }
-
-  100% {
-    transform: rotateZ(720deg);
-  }
-}
-
 .started::before {
   background-image: url("arrows.svg");
-  animation: spinArrow 5s infinite;
 }
 
 .errored {
   background-color: #ed6b5f;
 }
 
+@keyframes bounce {
+  60% { transform: rotateZ(0); }
+  70% { transform: rotateZ(25deg) scale(1.2, 1.2); }
+  80% { transform: rotateZ(-25deg) scale(1.2, 1.2); }
+  90% { transform: rotateZ(25deg) scale(1.2, 1.2); }
+  100% { transform: rotateZ(0deg) scale(1, 1); }
+}
+
 .errored::before { 
   background-image: url("thunder.svg");
+  animation: bounce 4s infinite linear;
 }
 
 .failed {
   background-color: #f5bf4f;
 }
 
+@keyframes shuffle {
+  33% { transform: translate(-10%, 0); }
+  66% { transform: translate(10%, 0); }
+  100% { transform: translate(0, 0); }
+}
+
 .failed::before {
   background-image: url("cloud.svg");
+  animation: shuffle 3s infinite ease-in-out;
 }
 
 .canceled {
