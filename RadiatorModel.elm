@@ -19,11 +19,14 @@ type alias Model = {
   mode: AppMode,
   configuration: Configuration,
   configPanel: ConfigPanel,
-  buildStatus : List RepositoryStatus
+  buildStatus : List RadiatorStatus
 }
 
-
-type alias RepositoryStatus = (String, List BuildStatus)
+type alias RadiatorStatus = {
+  repository: String,
+  branch: Maybe String,
+  state: String
+}
 
 
 type alias Configuration = {
@@ -39,8 +42,8 @@ type alias ConfigPanel = {
 
 
 type alias BuildStatus = {
-  branch : String,
-  state : String
+  branch: String,
+  state: String
 }
 
 

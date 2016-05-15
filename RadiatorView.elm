@@ -17,35 +17,25 @@ view actionAddress model =
   in H.div [] [
        H.button [A.class "config-button", E.onClick actionAddress FlipConfigMode] [],
        H.div [] configMarkup,
-       buildRadiatorListing model.buildStatus
+       buildRepositoryListing model.buildStatus
        ] 
 
 
-buildRadiatorListing: List RepositoryStatus -> Html
-buildRadiatorListing statuses =
-  let asBuildListing repoStatus = H.li [A.class "repository-item"] (buildRepositoryListing repoStatus)
-  in H.ul [A.class "repository-listing"] (List.map asBuildListing statuses)
+buildRepositoryListing: List RadiatorStatus -> Html
+buildRepositoryListing statuses =
+  let listElems = List.map asListItem statuses
+  in H.ul [A.class "branch-list"] listElems
 
 
-buildRepositoryListing: RepositoryStatus -> List Html
-buildRepositoryListing (repositoryName, buildStatuses) =
-  let repoDisplayName = displayableRepoName repositoryName
-      headerItem = H.li [A.class "repository-heading"] [H.text repoDisplayName]
-  in List.take 5 buildStatuses
-     |> List.map asListItem
-     |> (::) headerItem
-     |> H.ul [A.class "branch-list"]
-     |> Util.singleton
-
-
-asListItem: BuildStatus -> Html
+asListItem: RadiatorStatus -> Html
 asListItem s = H.li [A.class ("branch " ++ s.state)] (branchElems s) 
 
 
-branchElems: BuildStatus -> List Html
-branchElems { branch } = [
-    (H.span [A.class "branch-name"] [H.text branch])
-  ]
+branchElems: RadiatorStatus -> List Html
+branchElems { repository, branch } = 
+  let repoName = displayableRepoName repository 
+      branchName = Maybe.withDefault repoName (Maybe.map ((++) (repoName ++ ": ")) branch)
+  in [H.span [A.class "branch-name"] [H.text branchName]]
 
 
 configPanel: Configuration -> ConfigPanel -> Signal.Address Action -> List Html

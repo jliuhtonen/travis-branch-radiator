@@ -3,6 +3,7 @@ body {
   font-family: 'Open Sans', sans-serif;
   font-weight: 400;
   background-color: #002b36;
+  margin: 0;
 }
 
 ul {
@@ -15,28 +16,10 @@ a, a:visited {
   color: #fdf6e3;
 }
 
-.repository-listing {
-  position: fixed;
-  top: 0; right: 0; bottom: 0; left: 0;
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  overflow: scroll;
-}
-
-.repository-item {
-  flex: 1 0;
-}
-
-.repository-item:not(:first-child) {
-  border-left: 5px solid #002b36;
-}
-
 .branch-list {
   display: flex;
-  flex: 1 1;
   flex-direction: column;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   height: 100%;
 }
 
@@ -44,6 +27,7 @@ a, a:visited {
   flex: 1 1 auto;
   margin: auto;
   width: 100%;
+  min-height:8vh;
   display: flex;
   align-items: center;
   background-repeat: no-repeat;
@@ -60,17 +44,6 @@ a, a:visited {
   background-repeat: no-repeat;
   background-position: right 5% center;
   margin: 0 40px;
-}
-
-.repository-heading {
-  flex: 0 0 6%;
-  background-color: #002b36;
-  color: #fdf6e3;
-  font-family: 'Open Sans', sans-serif;
-  font-weight: 400;
-  font-size: 4vh;
-  text-align: center;
-  justify-content: center;
 }
 
 .branch:not(:first-child) {

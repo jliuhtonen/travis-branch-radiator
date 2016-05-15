@@ -66,8 +66,16 @@ updateConfig f model =
 
 refreshModelBuildState: List (String, Travis.BranchStatus) -> Model -> Model 
 refreshModelBuildState updatedBranchStatuses model =
-  let updatedBuildStatuses = List.map toBuildStatusList updatedBranchStatuses
-  in { model | buildStatus = updatedBuildStatuses }
+  let radiatorStatuses = List.concatMap (toRadiatorStatusList << toBuildStatusList) updatedBranchStatuses
+  in { model | buildStatus = radiatorStatuses }
+
+
+toRadiatorStatusList: (String, List BuildStatus) -> List RadiatorStatus
+toRadiatorStatusList (repository, branchBuildStatuses) =
+  let nonPassed = List.filter (\build -> build.state /= "passed") (List.take 5 branchBuildStatuses)
+  in case nonPassed of
+    [] -> [RadiatorStatus repository Nothing "passed"]
+    xs -> List.map (\build -> RadiatorStatus repository (Just build.branch) build.state) nonPassed
 
 
 toBuildStatusList: (String, Travis.BranchStatus) -> (String, List BuildStatus)
