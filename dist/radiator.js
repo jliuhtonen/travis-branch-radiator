@@ -11106,7 +11106,6 @@ Elm.RadiatorModel.make = function (_elm) {
    var Configuration = F2(function (a,b) {    return {apiKey: a,repositories: b};});
    var RadiatorStatus = F3(function (a,b,c) {    return {repository: a,branch: b,state: c};});
    var Model = F4(function (a,b,c,d) {    return {mode: a,configuration: b,configPanel: c,buildStatus: d};});
-   var SaveConfiguration = {ctor: "SaveConfiguration"};
    var SaveApiKey = {ctor: "SaveApiKey"};
    var TogglePrivateTravis = function (a) {    return {ctor: "TogglePrivateTravis",_0: a};};
    var UpdateApiKeyField = function (a) {    return {ctor: "UpdateApiKeyField",_0: a};};
@@ -11126,7 +11125,6 @@ Elm.RadiatorModel.make = function (_elm) {
                                       ,UpdateApiKeyField: UpdateApiKeyField
                                       ,TogglePrivateTravis: TogglePrivateTravis
                                       ,SaveApiKey: SaveApiKey
-                                      ,SaveConfiguration: SaveConfiguration
                                       ,Model: Model
                                       ,RadiatorStatus: RadiatorStatus
                                       ,Configuration: Configuration
@@ -11400,10 +11398,7 @@ Elm.RadiatorUpdate.make = function (_elm) {
          case "UpdateApiKeyField": var cfg = model.configPanel;
            var configView = _U.update(cfg,{apiKeyValue: _p15._0});
            return {ctor: "_Tuple2",_0: _U.update(model,{configPanel: configView}),_1: $Effects.none};
-         case "SaveApiKey": return A2(updateConfig,function (cfg) {    return _U.update(cfg,{apiKey: $Maybe.Just(model.configPanel.apiKeyValue)});},model);
-         default: return {ctor: "_Tuple2"
-                         ,_0: _U.update(model,{configuration: model.configuration,mode: $RadiatorModel.Monitoring})
-                         ,_1: refreshBuilds(model.configuration)};}
+         default: return A2(updateConfig,function (cfg) {    return _U.update(cfg,{apiKey: $Maybe.Just(model.configPanel.apiKeyValue)});},model);}
    });
    return _elm.RadiatorUpdate.values = {_op: _op,update: update,refreshBuilds: refreshBuilds};
 };

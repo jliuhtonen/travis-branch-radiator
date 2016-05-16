@@ -53,9 +53,6 @@ update action model =
      SaveApiKey -> 
        updateConfig (\cfg -> {cfg | apiKey = (Just model.configPanel.apiKeyValue)}) model
 
-     SaveConfiguration -> ({ model | configuration = model.configuration, 
-        mode = Monitoring }, (refreshBuilds model.configuration))
-
 
 updateConfig: (Configuration -> Configuration) -> Model -> (Model, Effects Action)
 updateConfig f model =

@@ -12,7 +12,6 @@ type Action = RefreshBuilds
             | UpdateApiKeyField String 
             | TogglePrivateTravis Bool
             | SaveApiKey
-            | SaveConfiguration
 
 
 type alias Model = {
