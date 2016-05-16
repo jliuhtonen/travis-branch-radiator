@@ -46,9 +46,6 @@ a, a:visited {
   margin: 0 40px;
 }
 
-.branch:not(:first-child) {
-}
-
 .branch-name {
   flex: 2 1;
   font-family: 'Open Sans', sans-serif;
