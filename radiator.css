@@ -120,6 +120,7 @@ a, a:visited {
   background-size: contain;
   border: 0;
   cursor: pointer;
+  outline: none;
   width: 5vh;
   height: 5vh;
   position: fixed;
