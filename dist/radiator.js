@@ -8131,49 +8131,49 @@ var _user$project$Travis$getBranchBuildStatus = F2(
 				A3(_user$project$Travis$travisApiGet, apiKey, _user$project$Travis$decodeBranchStatus, url)));
 	});
 
-var _user$project$RadiatorModel$Model = F4(
+var _user$project$Radiator_Model$Model = F4(
 	function (a, b, c, d) {
 		return {mode: a, configuration: b, configPanel: c, buildStatus: d};
 	});
-var _user$project$RadiatorModel$RadiatorStatus = F3(
+var _user$project$Radiator_Model$RadiatorStatus = F3(
 	function (a, b, c) {
 		return {repository: a, branch: b, state: c};
 	});
-var _user$project$RadiatorModel$Configuration = F2(
+var _user$project$Radiator_Model$Configuration = F2(
 	function (a, b) {
 		return {apiKey: a, repositories: b};
 	});
-var _user$project$RadiatorModel$ConfigPanel = F2(
+var _user$project$Radiator_Model$ConfigPanel = F2(
 	function (a, b) {
 		return {repositorySlug: a, apiKeyValue: b};
 	});
-var _user$project$RadiatorModel$BuildStatus = F2(
+var _user$project$Radiator_Model$BuildStatus = F2(
 	function (a, b) {
 		return {branch: a, state: b};
 	});
-var _user$project$RadiatorModel$SaveApiKey = {ctor: 'SaveApiKey'};
-var _user$project$RadiatorModel$TogglePrivateTravis = function (a) {
+var _user$project$Radiator_Model$SaveApiKey = {ctor: 'SaveApiKey'};
+var _user$project$Radiator_Model$TogglePrivateTravis = function (a) {
 	return {ctor: 'TogglePrivateTravis', _0: a};
 };
-var _user$project$RadiatorModel$UpdateApiKeyField = function (a) {
+var _user$project$Radiator_Model$UpdateApiKeyField = function (a) {
 	return {ctor: 'UpdateApiKeyField', _0: a};
 };
-var _user$project$RadiatorModel$RemoveRepository = function (a) {
+var _user$project$Radiator_Model$RemoveRepository = function (a) {
 	return {ctor: 'RemoveRepository', _0: a};
 };
-var _user$project$RadiatorModel$AddRepository = {ctor: 'AddRepository'};
-var _user$project$RadiatorModel$UpdateRepositoryField = function (a) {
+var _user$project$Radiator_Model$AddRepository = {ctor: 'AddRepository'};
+var _user$project$Radiator_Model$UpdateRepositoryField = function (a) {
 	return {ctor: 'UpdateRepositoryField', _0: a};
 };
-var _user$project$RadiatorModel$FlipConfigMode = {ctor: 'FlipConfigMode'};
-var _user$project$RadiatorModel$NewBuildStatus = function (a) {
+var _user$project$Radiator_Model$FlipConfigMode = {ctor: 'FlipConfigMode'};
+var _user$project$Radiator_Model$NewBuildStatus = function (a) {
 	return {ctor: 'NewBuildStatus', _0: a};
 };
-var _user$project$RadiatorModel$RefreshBuilds = {ctor: 'RefreshBuilds'};
-var _user$project$RadiatorModel$Config = {ctor: 'Config'};
-var _user$project$RadiatorModel$Monitoring = {ctor: 'Monitoring'};
+var _user$project$Radiator_Model$RefreshBuilds = {ctor: 'RefreshBuilds'};
+var _user$project$Radiator_Model$Config = {ctor: 'Config'};
+var _user$project$Radiator_Model$Monitoring = {ctor: 'Monitoring'};
 
-var _user$project$Ports$saveConfiguration = _elm_lang$core$Native_Platform.outgoingPort(
+var _user$project$Radiator_Ports$saveConfiguration = _elm_lang$core$Native_Platform.outgoingPort(
 	'saveConfiguration',
 	function (v) {
 		return {
@@ -8227,402 +8227,44 @@ var _user$project$Util$isJust = function (m) {
 	}
 };
 
-var _user$project$RadiatorView$attributions = A2(
-	_elm_lang$html$Html$div,
-	_elm_lang$core$Native_List.fromArray(
-		[
-			_elm_lang$html$Html_Attributes$class('attributions')
-		]),
-	_elm_lang$core$Native_List.fromArray(
-		[
-			_elm_lang$html$Html$text('Icons made by '),
-			A2(
-			_elm_lang$html$Html$a,
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$html$Html_Attributes$href('http://www.flaticon.com/authors/robin-kylander')
-				]),
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$html$Html$text('Robin Kylander')
-				])),
-			_elm_lang$html$Html$text(' from www.flaticon.com are licensed by CC 3.0 BY')
-		]));
-var _user$project$RadiatorView$displayableRepoName = function (name) {
-	var nameParts = A2(_elm_lang$core$String$split, '/', name);
-	return (_elm_lang$core$Native_Utils.cmp(
-		_elm_lang$core$List$length(nameParts),
-		1) > 0) ? A2(
-		_elm_lang$core$Maybe$withDefault,
-		name,
-		_elm_lang$core$List$head(
-			A2(_elm_lang$core$List$drop, 1, nameParts))) : name;
-};
-var _user$project$RadiatorView$repositoryItem = function (repoName) {
-	var clickOptions = {preventDefault: true, stopPropagation: false};
-	return A2(
-		_elm_lang$html$Html$li,
-		_elm_lang$core$Native_List.fromArray(
-			[]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				A2(
-				_elm_lang$html$Html$span,
-				_elm_lang$core$Native_List.fromArray(
-					[]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text(repoName)
-					])),
-				A2(
-				_elm_lang$html$Html$a,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Events$onClick(
-						_user$project$RadiatorModel$RemoveRepository(repoName)),
-						_elm_lang$html$Html_Attributes$href('#')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						A2(
-						_elm_lang$html$Html$img,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$class('remove-repository-icon'),
-								_elm_lang$html$Html_Attributes$src('close-circular-button.svg')
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[]))
-					]))
-			]));
-};
-var _user$project$RadiatorView$apiKeyInput = function (apiKey) {
-	return A2(
-		_elm_lang$html$Html$div,
-		_elm_lang$core$Native_List.fromArray(
-			[]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				A2(
-				_elm_lang$html$Html$label,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$for('api-key-field')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text('Private Travis API key:')
-					])),
-				A2(
-				_elm_lang$html$Html$div,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('config-panel-control-row')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						A2(
-						_elm_lang$html$Html$input,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$type$('text'),
-								_elm_lang$html$Html_Attributes$id('api-key-field'),
-								_elm_lang$html$Html_Attributes$value(apiKey),
-								_elm_lang$html$Html_Events$onInput(_user$project$RadiatorModel$UpdateApiKeyField)
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[])),
-						A2(
-						_elm_lang$html$Html$button,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Events$onClick(_user$project$RadiatorModel$SaveApiKey)
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html$text('Set')
-							]))
-					]))
-			]));
-};
-var _user$project$RadiatorView$usePrivateTravisInput = function ($private) {
-	return A2(
-		_elm_lang$html$Html$div,
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html_Attributes$class('config-panel-control-row')
-			]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				A2(
-				_elm_lang$html$Html$input,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$id('use-private-travis-checkbox'),
-						_elm_lang$html$Html_Attributes$type$('checkbox'),
-						_elm_lang$html$Html_Attributes$checked($private),
-						_elm_lang$html$Html_Events$onCheck(_user$project$RadiatorModel$TogglePrivateTravis)
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[])),
-				A2(
-				_elm_lang$html$Html$label,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$for('use-private-travis-checkbox')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text('Use private Travis')
-					]))
-			]));
-};
-var _user$project$RadiatorView$repositoryInput = function (repositorySlug) {
-	return A2(
-		_elm_lang$html$Html$div,
-		_elm_lang$core$Native_List.fromArray(
-			[]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				A2(
-				_elm_lang$html$Html$label,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$for('add-repository')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html$text('Add a new repository')
-					])),
-				A2(
-				_elm_lang$html$Html$div,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('config-panel-control-row')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						A2(
-						_elm_lang$html$Html$input,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$type$('text'),
-								_elm_lang$html$Html_Attributes$id('add-repository'),
-								_elm_lang$html$Html_Attributes$value(repositorySlug),
-								_elm_lang$html$Html_Events$onInput(_user$project$RadiatorModel$UpdateRepositoryField)
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[])),
-						A2(
-						_elm_lang$html$Html$button,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Events$onClick(_user$project$RadiatorModel$AddRepository)
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html$text('Add')
-							]))
-					]))
-			]));
-};
-var _user$project$RadiatorView$configPanel = F2(
-	function (_p1, _p0) {
-		var _p2 = _p1;
-		var _p3 = _p0;
-		var repositoryItems = A2(_elm_lang$core$List$map, _user$project$RadiatorView$repositoryItem, _p2.repositories);
-		var usePrivateTravis = _user$project$Util$isJust(_p2.apiKey);
-		return _elm_lang$core$Native_List.fromArray(
-			[
-				A2(
-				_elm_lang$html$Html$div,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('config-panel')
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[
-						A2(
-						_elm_lang$html$Html$button,
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html_Attributes$class('config-close-button'),
-								_elm_lang$html$Html_Events$onClick(_user$project$RadiatorModel$FlipConfigMode)
-							]),
-						_elm_lang$core$Native_List.fromArray(
-							[])),
-						A2(
-						_elm_lang$html$Html$h2,
-						_elm_lang$core$Native_List.fromArray(
-							[]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								_elm_lang$html$Html$text('Configuration')
-							])),
-						A2(
-						_elm_lang$html$Html$section,
-						_elm_lang$core$Native_List.fromArray(
-							[]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								A2(
-								_elm_lang$html$Html$h3,
-								_elm_lang$core$Native_List.fromArray(
-									[]),
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html$text('Repositories')
-									])),
-								A2(
-								_elm_lang$html$Html$ul,
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html_Attributes$class('config-repository-list')
-									]),
-								repositoryItems),
-								_user$project$RadiatorView$repositoryInput(_p3.repositorySlug)
-							])),
-						A2(
-						_elm_lang$html$Html$section,
-						_elm_lang$core$Native_List.fromArray(
-							[]),
-						_elm_lang$core$Native_List.fromArray(
-							[
-								A2(
-								_elm_lang$html$Html$h3,
-								_elm_lang$core$Native_List.fromArray(
-									[]),
-								_elm_lang$core$Native_List.fromArray(
-									[
-										_elm_lang$html$Html$text('API')
-									])),
-								_user$project$RadiatorView$usePrivateTravisInput(usePrivateTravis),
-								_user$project$RadiatorView$apiKeyInput(_p3.apiKeyValue)
-							])),
-						_user$project$RadiatorView$attributions
-					]))
-			]);
-	});
-var _user$project$RadiatorView$branchElems = function (_p4) {
-	var _p5 = _p4;
-	var repoName = _user$project$RadiatorView$displayableRepoName(_p5.repository);
-	var branchName = A2(
-		_elm_lang$core$Maybe$withDefault,
-		repoName,
-		A2(
-			_elm_lang$core$Maybe$map,
-			F2(
-				function (x, y) {
-					return A2(_elm_lang$core$Basics_ops['++'], x, y);
-				})(
-				A2(_elm_lang$core$Basics_ops['++'], repoName, ': ')),
-			_p5.branch));
-	return _elm_lang$core$Native_List.fromArray(
-		[
-			A2(
-			_elm_lang$html$Html$span,
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$html$Html_Attributes$class('branch-name')
-				]),
-			_elm_lang$core$Native_List.fromArray(
-				[
-					_elm_lang$html$Html$text(branchName)
-				]))
-		]);
-};
-var _user$project$RadiatorView$asListItem = function (s) {
-	return A2(
-		_elm_lang$html$Html$li,
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html_Attributes$class(
-				A2(_elm_lang$core$Basics_ops['++'], 'branch ', s.state))
-			]),
-		_user$project$RadiatorView$branchElems(s));
-};
-var _user$project$RadiatorView$buildRepositoryListing = function (statuses) {
-	var listElems = A2(_elm_lang$core$List$map, _user$project$RadiatorView$asListItem, statuses);
-	return A2(
-		_elm_lang$html$Html$ul,
-		_elm_lang$core$Native_List.fromArray(
-			[
-				_elm_lang$html$Html_Attributes$class('branch-list')
-			]),
-		listElems);
-};
-var _user$project$RadiatorView$view = function (model) {
-	var configMarkup = function () {
-		var _p6 = model.mode;
-		if (_p6.ctor === 'Config') {
-			return A2(_user$project$RadiatorView$configPanel, model.configuration, model.configPanel);
-		} else {
-			return _elm_lang$core$Native_List.fromArray(
-				[]);
-		}
-	}();
-	return A2(
-		_elm_lang$html$Html$div,
-		_elm_lang$core$Native_List.fromArray(
-			[]),
-		_elm_lang$core$Native_List.fromArray(
-			[
-				A2(
-				_elm_lang$html$Html$button,
-				_elm_lang$core$Native_List.fromArray(
-					[
-						_elm_lang$html$Html_Attributes$class('config-button'),
-						_elm_lang$html$Html_Events$onClick(_user$project$RadiatorModel$FlipConfigMode)
-					]),
-				_elm_lang$core$Native_List.fromArray(
-					[])),
-				A2(
-				_elm_lang$html$Html$div,
-				_elm_lang$core$Native_List.fromArray(
-					[]),
-				configMarkup),
-				_user$project$RadiatorView$buildRepositoryListing(model.buildStatus)
-			]));
-};
-
-var _user$project$RadiatorUpdate$flipAppMode = function (mode) {
+var _user$project$Radiator_Update$flipAppMode = function (mode) {
 	var _p0 = mode;
 	if (_p0.ctor === 'Monitoring') {
-		return _user$project$RadiatorModel$Config;
+		return _user$project$Radiator_Model$Config;
 	} else {
-		return _user$project$RadiatorModel$Monitoring;
+		return _user$project$Radiator_Model$Monitoring;
 	}
 };
-var _user$project$RadiatorUpdate$refreshBuilds = function (_p1) {
+var _user$project$Radiator_Update$refreshBuilds = function (_p1) {
 	var _p2 = _p1;
 	var repositoryTasks = function (repository) {
 		return A2(_user$project$Travis$getBranchBuildStatus, _p2.apiKey, repository);
 	};
 	return A3(
 		_elm_lang$core$Task$perform,
-		_user$project$RadiatorModel$NewBuildStatus,
-		_user$project$RadiatorModel$NewBuildStatus,
+		_user$project$Radiator_Model$NewBuildStatus,
+		_user$project$Radiator_Model$NewBuildStatus,
 		A2(
 			_elm_lang$core$Task$map,
 			_user$project$Util$sequence,
 			_elm_lang$core$Task$sequence(
 				A2(_elm_lang$core$List$map, repositoryTasks, _p2.repositories))));
 };
-var _user$project$RadiatorUpdate$combineAsBuildStatus = F2(
+var _user$project$Radiator_Update$combineAsBuildStatus = F2(
 	function (_p4, _p3) {
 		var _p5 = _p4;
 		var _p6 = _p3;
 		return {state: _p5.state, branch: _p6.branch};
 	});
-var _user$project$RadiatorUpdate$toBuildStatusList = function (_p7) {
+var _user$project$Radiator_Update$toBuildStatusList = function (_p7) {
 	var _p8 = _p7;
 	return {
 		ctor: '_Tuple2',
 		_0: _p8._0,
-		_1: A3(_elm_lang$core$List$map2, _user$project$RadiatorUpdate$combineAsBuildStatus, _p8._1.branches, _p8._1.commits)
+		_1: A3(_elm_lang$core$List$map2, _user$project$Radiator_Update$combineAsBuildStatus, _p8._1.branches, _p8._1.commits)
 	};
 };
-var _user$project$RadiatorUpdate$toRadiatorStatusList = function (_p9) {
+var _user$project$Radiator_Update$toRadiatorStatusList = function (_p9) {
 	var _p10 = _p9;
 	var _p12 = _p10._0;
 	var nonPassed = A2(
@@ -8635,14 +8277,14 @@ var _user$project$RadiatorUpdate$toRadiatorStatusList = function (_p9) {
 	if (_p11.ctor === '[]') {
 		return _elm_lang$core$Native_List.fromArray(
 			[
-				A3(_user$project$RadiatorModel$RadiatorStatus, _p12, _elm_lang$core$Maybe$Nothing, 'passed')
+				A3(_user$project$Radiator_Model$RadiatorStatus, _p12, _elm_lang$core$Maybe$Nothing, 'passed')
 			]);
 	} else {
 		return A2(
 			_elm_lang$core$List$map,
 			function (build) {
 				return A3(
-					_user$project$RadiatorModel$RadiatorStatus,
+					_user$project$Radiator_Model$RadiatorStatus,
 					_p12,
 					_elm_lang$core$Maybe$Just(build.branch),
 					build.state);
@@ -8650,28 +8292,28 @@ var _user$project$RadiatorUpdate$toRadiatorStatusList = function (_p9) {
 			nonPassed);
 	}
 };
-var _user$project$RadiatorUpdate$refreshModelBuildState = F2(
+var _user$project$Radiator_Update$refreshModelBuildState = F2(
 	function (updatedBranchStatuses, model) {
 		var radiatorStatuses = A2(
 			_elm_lang$core$List$concatMap,
 			function (_p13) {
-				return _user$project$RadiatorUpdate$toRadiatorStatusList(
-					_user$project$RadiatorUpdate$toBuildStatusList(_p13));
+				return _user$project$Radiator_Update$toRadiatorStatusList(
+					_user$project$Radiator_Update$toBuildStatusList(_p13));
 			},
 			updatedBranchStatuses);
 		return _elm_lang$core$Native_Utils.update(
 			model,
 			{buildStatus: radiatorStatuses});
 	});
-var _user$project$RadiatorUpdate$updateConfigurationCmd = function (config) {
+var _user$project$Radiator_Update$updateConfigurationCmd = function (config) {
 	return _elm_lang$core$Platform_Cmd$batch(
 		_elm_lang$core$Native_List.fromArray(
 			[
-				_user$project$Ports$saveConfiguration(config),
-				_user$project$RadiatorUpdate$refreshBuilds(config)
+				_user$project$Radiator_Ports$saveConfiguration(config),
+				_user$project$Radiator_Update$refreshBuilds(config)
 			]));
 };
-var _user$project$RadiatorUpdate$updateConfig = F2(
+var _user$project$Radiator_Update$updateConfig = F2(
 	function (f, model) {
 		var cfg = model.configuration;
 		var updatedModel = _elm_lang$core$Native_Utils.update(
@@ -8682,10 +8324,10 @@ var _user$project$RadiatorUpdate$updateConfig = F2(
 		return {
 			ctor: '_Tuple2',
 			_0: updatedModel,
-			_1: _user$project$RadiatorUpdate$updateConfigurationCmd(updatedModel.configuration)
+			_1: _user$project$Radiator_Update$updateConfigurationCmd(updatedModel.configuration)
 		};
 	});
-var _user$project$RadiatorUpdate$update = F2(
+var _user$project$Radiator_Update$update = F2(
 	function (action, model) {
 		var _p14 = action;
 		switch (_p14.ctor) {
@@ -8693,13 +8335,13 @@ var _user$project$RadiatorUpdate$update = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: model,
-					_1: _user$project$RadiatorUpdate$refreshBuilds(model.configuration)
+					_1: _user$project$Radiator_Update$refreshBuilds(model.configuration)
 				};
 			case 'NewBuildStatus':
 				if (_p14._0.ctor === 'Just') {
 					return {
 						ctor: '_Tuple2',
-						_0: A2(_user$project$RadiatorUpdate$refreshModelBuildState, _p14._0._0, model),
+						_0: A2(_user$project$Radiator_Update$refreshModelBuildState, _p14._0._0, model),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				} else {
@@ -8711,7 +8353,7 @@ var _user$project$RadiatorUpdate$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							mode: _user$project$RadiatorUpdate$flipAppMode(model.mode)
+							mode: _user$project$Radiator_Update$flipAppMode(model.mode)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
@@ -8748,7 +8390,7 @@ var _user$project$RadiatorUpdate$update = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: updatedModel,
-					_1: _user$project$RadiatorUpdate$updateConfigurationCmd(updatedModel.configuration)
+					_1: _user$project$Radiator_Update$updateConfigurationCmd(updatedModel.configuration)
 				};
 			case 'RemoveRepository':
 				var newRepositories = A2(
@@ -8758,7 +8400,7 @@ var _user$project$RadiatorUpdate$update = F2(
 					},
 					model.configuration.repositories);
 				return A2(
-					_user$project$RadiatorUpdate$updateConfig,
+					_user$project$Radiator_Update$updateConfig,
 					function (cfg) {
 						return _elm_lang$core$Native_Utils.update(
 							cfg,
@@ -8768,7 +8410,7 @@ var _user$project$RadiatorUpdate$update = F2(
 			case 'TogglePrivateTravis':
 				var newApiKey = _p14._0 ? _elm_lang$core$Maybe$Just(model.configPanel.apiKeyValue) : _elm_lang$core$Maybe$Nothing;
 				return A2(
-					_user$project$RadiatorUpdate$updateConfig,
+					_user$project$Radiator_Update$updateConfig,
 					function (cfg) {
 						return _elm_lang$core$Native_Utils.update(
 							cfg,
@@ -8789,7 +8431,7 @@ var _user$project$RadiatorUpdate$update = F2(
 				};
 			default:
 				return A2(
-					_user$project$RadiatorUpdate$updateConfig,
+					_user$project$Radiator_Update$updateConfig,
 					function (cfg) {
 						return _elm_lang$core$Native_Utils.update(
 							cfg,
@@ -8801,11 +8443,369 @@ var _user$project$RadiatorUpdate$update = F2(
 		}
 	});
 
+var _user$project$Radiator_View$attributions = A2(
+	_elm_lang$html$Html$div,
+	_elm_lang$core$Native_List.fromArray(
+		[
+			_elm_lang$html$Html_Attributes$class('attributions')
+		]),
+	_elm_lang$core$Native_List.fromArray(
+		[
+			_elm_lang$html$Html$text('Icons made by '),
+			A2(
+			_elm_lang$html$Html$a,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$href('http://www.flaticon.com/authors/robin-kylander')
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html$text('Robin Kylander')
+				])),
+			_elm_lang$html$Html$text(' from www.flaticon.com are licensed by CC 3.0 BY')
+		]));
+var _user$project$Radiator_View$displayableRepoName = function (name) {
+	var nameParts = A2(_elm_lang$core$String$split, '/', name);
+	return (_elm_lang$core$Native_Utils.cmp(
+		_elm_lang$core$List$length(nameParts),
+		1) > 0) ? A2(
+		_elm_lang$core$Maybe$withDefault,
+		name,
+		_elm_lang$core$List$head(
+			A2(_elm_lang$core$List$drop, 1, nameParts))) : name;
+};
+var _user$project$Radiator_View$repositoryItem = function (repoName) {
+	var clickOptions = {preventDefault: true, stopPropagation: false};
+	return A2(
+		_elm_lang$html$Html$li,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$span,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text(repoName)
+					])),
+				A2(
+				_elm_lang$html$Html$a,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Events$onClick(
+						_user$project$Radiator_Model$RemoveRepository(repoName)),
+						_elm_lang$html$Html_Attributes$href('#')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$img,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('remove-repository-icon'),
+								_elm_lang$html$Html_Attributes$src('close-circular-button.svg')
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[]))
+					]))
+			]));
+};
+var _user$project$Radiator_View$apiKeyInput = function (apiKey) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$label,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$for('api-key-field')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Private Travis API key:')
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('config-panel-control-row')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$input,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$type$('text'),
+								_elm_lang$html$Html_Attributes$id('api-key-field'),
+								_elm_lang$html$Html_Attributes$value(apiKey),
+								_elm_lang$html$Html_Events$onInput(_user$project$Radiator_Model$UpdateApiKeyField)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[])),
+						A2(
+						_elm_lang$html$Html$button,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Events$onClick(_user$project$Radiator_Model$SaveApiKey)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('Set')
+							]))
+					]))
+			]));
+};
+var _user$project$Radiator_View$usePrivateTravisInput = function ($private) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('config-panel-control-row')
+			]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$input,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$id('use-private-travis-checkbox'),
+						_elm_lang$html$Html_Attributes$type$('checkbox'),
+						_elm_lang$html$Html_Attributes$checked($private),
+						_elm_lang$html$Html_Events$onCheck(_user$project$Radiator_Model$TogglePrivateTravis)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$label,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$for('use-private-travis-checkbox')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Use private Travis')
+					]))
+			]));
+};
+var _user$project$Radiator_View$repositoryInput = function (repositorySlug) {
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$label,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$for('add-repository')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html$text('Add a new repository')
+					])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('config-panel-control-row')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$input,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$type$('text'),
+								_elm_lang$html$Html_Attributes$id('add-repository'),
+								_elm_lang$html$Html_Attributes$value(repositorySlug),
+								_elm_lang$html$Html_Events$onInput(_user$project$Radiator_Model$UpdateRepositoryField)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[])),
+						A2(
+						_elm_lang$html$Html$button,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Events$onClick(_user$project$Radiator_Model$AddRepository)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('Add')
+							]))
+					]))
+			]));
+};
+var _user$project$Radiator_View$configPanel = F2(
+	function (_p1, _p0) {
+		var _p2 = _p1;
+		var _p3 = _p0;
+		var repositoryItems = A2(_elm_lang$core$List$map, _user$project$Radiator_View$repositoryItem, _p2.repositories);
+		var usePrivateTravis = _user$project$Util$isJust(_p2.apiKey);
+		return _elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('config-panel')
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[
+						A2(
+						_elm_lang$html$Html$button,
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html_Attributes$class('config-close-button'),
+								_elm_lang$html$Html_Events$onClick(_user$project$Radiator_Model$FlipConfigMode)
+							]),
+						_elm_lang$core$Native_List.fromArray(
+							[])),
+						A2(
+						_elm_lang$html$Html$h2,
+						_elm_lang$core$Native_List.fromArray(
+							[]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								_elm_lang$html$Html$text('Configuration')
+							])),
+						A2(
+						_elm_lang$html$Html$section,
+						_elm_lang$core$Native_List.fromArray(
+							[]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								A2(
+								_elm_lang$html$Html$h3,
+								_elm_lang$core$Native_List.fromArray(
+									[]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html$text('Repositories')
+									])),
+								A2(
+								_elm_lang$html$Html$ul,
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html_Attributes$class('config-repository-list')
+									]),
+								repositoryItems),
+								_user$project$Radiator_View$repositoryInput(_p3.repositorySlug)
+							])),
+						A2(
+						_elm_lang$html$Html$section,
+						_elm_lang$core$Native_List.fromArray(
+							[]),
+						_elm_lang$core$Native_List.fromArray(
+							[
+								A2(
+								_elm_lang$html$Html$h3,
+								_elm_lang$core$Native_List.fromArray(
+									[]),
+								_elm_lang$core$Native_List.fromArray(
+									[
+										_elm_lang$html$Html$text('API')
+									])),
+								_user$project$Radiator_View$usePrivateTravisInput(usePrivateTravis),
+								_user$project$Radiator_View$apiKeyInput(_p3.apiKeyValue)
+							])),
+						_user$project$Radiator_View$attributions
+					]))
+			]);
+	});
+var _user$project$Radiator_View$branchElems = function (_p4) {
+	var _p5 = _p4;
+	var repoName = _user$project$Radiator_View$displayableRepoName(_p5.repository);
+	var branchName = A2(
+		_elm_lang$core$Maybe$withDefault,
+		repoName,
+		A2(
+			_elm_lang$core$Maybe$map,
+			F2(
+				function (x, y) {
+					return A2(_elm_lang$core$Basics_ops['++'], x, y);
+				})(
+				A2(_elm_lang$core$Basics_ops['++'], repoName, ': ')),
+			_p5.branch));
+	return _elm_lang$core$Native_List.fromArray(
+		[
+			A2(
+			_elm_lang$html$Html$span,
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html_Attributes$class('branch-name')
+				]),
+			_elm_lang$core$Native_List.fromArray(
+				[
+					_elm_lang$html$Html$text(branchName)
+				]))
+		]);
+};
+var _user$project$Radiator_View$asListItem = function (s) {
+	return A2(
+		_elm_lang$html$Html$li,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class(
+				A2(_elm_lang$core$Basics_ops['++'], 'branch ', s.state))
+			]),
+		_user$project$Radiator_View$branchElems(s));
+};
+var _user$project$Radiator_View$buildRepositoryListing = function (statuses) {
+	var listElems = A2(_elm_lang$core$List$map, _user$project$Radiator_View$asListItem, statuses);
+	return A2(
+		_elm_lang$html$Html$ul,
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_elm_lang$html$Html_Attributes$class('branch-list')
+			]),
+		listElems);
+};
+var _user$project$Radiator_View$view = function (model) {
+	var configMarkup = function () {
+		var _p6 = model.mode;
+		if (_p6.ctor === 'Config') {
+			return A2(_user$project$Radiator_View$configPanel, model.configuration, model.configPanel);
+		} else {
+			return _elm_lang$core$Native_List.fromArray(
+				[]);
+		}
+	}();
+	return A2(
+		_elm_lang$html$Html$div,
+		_elm_lang$core$Native_List.fromArray(
+			[]),
+		_elm_lang$core$Native_List.fromArray(
+			[
+				A2(
+				_elm_lang$html$Html$button,
+				_elm_lang$core$Native_List.fromArray(
+					[
+						_elm_lang$html$Html_Attributes$class('config-button'),
+						_elm_lang$html$Html_Events$onClick(_user$project$Radiator_Model$FlipConfigMode)
+					]),
+				_elm_lang$core$Native_List.fromArray(
+					[])),
+				A2(
+				_elm_lang$html$Html$div,
+				_elm_lang$core$Native_List.fromArray(
+					[]),
+				configMarkup),
+				_user$project$Radiator_View$buildRepositoryListing(model.buildStatus)
+			]));
+};
+
 var _user$project$RadiatorApp$timedUpdate = A2(
 	_elm_lang$core$Time$every,
 	30 * _elm_lang$core$Time$second,
 	function (_p0) {
-		return _user$project$RadiatorModel$RefreshBuilds;
+		return _user$project$Radiator_Model$RefreshBuilds;
 	});
 var _user$project$RadiatorApp$initialConfigPanel = function (config) {
 	return {
@@ -8825,8 +8825,8 @@ var _user$project$RadiatorApp$initialize = function (_p1) {
 	var _p2 = _p1;
 	var config = A2(_elm_lang$core$Maybe$withDefault, _user$project$RadiatorApp$defaultConfig, _p2.localStorageCfg);
 	var model = A4(
-		_user$project$RadiatorModel$Model,
-		_user$project$RadiatorModel$Config,
+		_user$project$Radiator_Model$Model,
+		_user$project$Radiator_Model$Config,
 		config,
 		_user$project$RadiatorApp$initialConfigPanel(config),
 		_elm_lang$core$Native_List.fromArray(
@@ -8834,15 +8834,15 @@ var _user$project$RadiatorApp$initialize = function (_p1) {
 	return {
 		ctor: '_Tuple2',
 		_0: model,
-		_1: _user$project$RadiatorUpdate$refreshBuilds(config)
+		_1: _user$project$Radiator_Update$refreshBuilds(config)
 	};
 };
 var _user$project$RadiatorApp$main = {
 	main: _elm_lang$html$Html_App$programWithFlags(
 		{
 			init: _user$project$RadiatorApp$initialize,
-			view: _user$project$RadiatorView$view,
-			update: _user$project$RadiatorUpdate$update,
+			view: _user$project$Radiator_View$view,
+			update: _user$project$Radiator_Update$update,
 			subscriptions: function (_p3) {
 				return _user$project$RadiatorApp$timedUpdate;
 			}

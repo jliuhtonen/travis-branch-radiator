@@ -3,9 +3,9 @@ module RadiatorApp exposing (..)
 import Html.App as Html
 import Task exposing (Task)
 import Time exposing (..)
-import RadiatorModel as Model
-import RadiatorView as View
-import RadiatorUpdate as Update
+import Radiator.Model as Model
+import Radiator.View as View
+import Radiator.Update as Update
 
 defaultConfig = { apiKey = Nothing, repositories =
   ["elm-lang/elm-compiler", "elm-lang/core"] }

@@ -1,4 +1,4 @@
-module RadiatorModel exposing (..)
+module Radiator.Model exposing (..)
 
 import Travis
 

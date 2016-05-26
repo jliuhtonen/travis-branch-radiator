@@ -1,12 +1,12 @@
-module RadiatorUpdate exposing (update, refreshBuilds)
+module Radiator.Update exposing (update, refreshBuilds)
 
 import String
 import Task
 import Platform.Cmd exposing (Cmd)
-import Ports
+import Radiator.Ports as Ports
 
 import Travis
-import RadiatorModel as Model exposing (..)
+import Radiator.Model as Model exposing (..)
 import Util
 
 update : Msg -> Model -> (Model, Cmd Msg)
