@@ -33,7 +33,7 @@ update action model =
            cfgPanel = model.configPanel
            updatedRepositories = List.append model.configuration.repositories [model.configPanel.repositorySlug]
            updatedModel = ({ model | configuration = { currentConfig | repositories = updatedRepositories }, configPanel = { cfgPanel | repositorySlug = "" } })
-       in (updatedModel, refreshBuilds updatedModel.configuration) 
+       in (updatedModel, updateConfigurationCmd updatedModel.configuration)
 
      RemoveRepository repository ->
        let newRepositories = List.filter (\r -> r /= repository) model.configuration.repositories
@@ -58,8 +58,11 @@ updateConfig: (Configuration -> Configuration) -> Model -> (Model, Cmd Msg)
 updateConfig f model =
   let cfg = model.configuration
       updatedModel = { model | configuration = f cfg }
-  in (updatedModel, Ports.saveConfiguration updatedModel.configuration)
+  in (updatedModel, updateConfigurationCmd updatedModel.configuration)
 
+updateConfigurationCmd: Model.Configuration -> Cmd Msg
+updateConfigurationCmd config =
+  Cmd.batch [Ports.saveConfiguration config, refreshBuilds config]
 
 refreshModelBuildState: List (String, Travis.BranchStatus) -> Model -> Model 
 refreshModelBuildState updatedBranchStatuses model =

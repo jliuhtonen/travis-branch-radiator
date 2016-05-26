@@ -8663,6 +8663,14 @@ var _user$project$RadiatorUpdate$refreshModelBuildState = F2(
 			model,
 			{buildStatus: radiatorStatuses});
 	});
+var _user$project$RadiatorUpdate$updateConfigurationCmd = function (config) {
+	return _elm_lang$core$Platform_Cmd$batch(
+		_elm_lang$core$Native_List.fromArray(
+			[
+				_user$project$Ports$saveConfiguration(config),
+				_user$project$RadiatorUpdate$refreshBuilds(config)
+			]));
+};
 var _user$project$RadiatorUpdate$updateConfig = F2(
 	function (f, model) {
 		var cfg = model.configuration;
@@ -8674,7 +8682,7 @@ var _user$project$RadiatorUpdate$updateConfig = F2(
 		return {
 			ctor: '_Tuple2',
 			_0: updatedModel,
-			_1: _user$project$Ports$saveConfiguration(updatedModel.configuration)
+			_1: _user$project$RadiatorUpdate$updateConfigurationCmd(updatedModel.configuration)
 		};
 	});
 var _user$project$RadiatorUpdate$update = F2(
@@ -8740,7 +8748,7 @@ var _user$project$RadiatorUpdate$update = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: updatedModel,
-					_1: _user$project$RadiatorUpdate$refreshBuilds(updatedModel.configuration)
+					_1: _user$project$RadiatorUpdate$updateConfigurationCmd(updatedModel.configuration)
 				};
 			case 'RemoveRepository':
 				var newRepositories = A2(
