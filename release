@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+RELEASE=$1
+git pull -r && git tag $RELEASE && git push --tags && git push origin master:gh-pages --force
