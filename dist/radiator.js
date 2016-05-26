@@ -8818,9 +8818,6 @@ var _user$project$RadiatorApp$defaultConfig = {
 	repositories: _elm_lang$core$Native_List.fromArray(
 		['elm-lang/elm-compiler', 'elm-lang/core'])
 };
-var _user$project$RadiatorApp$config = function (loadedConfig) {
-	return A2(_elm_lang$core$Maybe$withDefault, _user$project$RadiatorApp$defaultConfig, loadedConfig);
-};
 var _user$project$RadiatorApp$initialize = function (_p1) {
 	var _p2 = _p1;
 	var config = A2(_elm_lang$core$Maybe$withDefault, _user$project$RadiatorApp$defaultConfig, _p2.localStorageCfg);

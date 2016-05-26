@@ -11,10 +11,6 @@ defaultConfig = { apiKey = Nothing, repositories =
   ["elm-lang/elm-compiler", "elm-lang/core"] }
 
 
-config: Maybe Model.Configuration -> Model.Configuration
-config loadedConfig = Maybe.withDefault defaultConfig loadedConfig
-
-
 initialConfigPanel: Model.Configuration -> Model.ConfigPanel
 initialConfigPanel config =
   {
