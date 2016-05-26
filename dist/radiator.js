@@ -8505,7 +8505,7 @@ var _user$project$Radiator_View$repositoryItem = function (repoName) {
 						_elm_lang$core$Native_List.fromArray(
 							[
 								_elm_lang$html$Html_Attributes$class('remove-repository-icon'),
-								_elm_lang$html$Html_Attributes$src('close-circular-button.svg')
+								_elm_lang$html$Html_Attributes$src('img/close-circular-button.svg')
 							]),
 						_elm_lang$core$Native_List.fromArray(
 							[]))

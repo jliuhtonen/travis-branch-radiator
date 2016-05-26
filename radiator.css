@@ -65,7 +65,7 @@ a, a:visited {
 }
 
 .passed::before {
-  background-image: url("sunny.svg");
+  background-image: url("img/sunny.svg");
   animation: roll 90s infinite alternate linear;
 }
 
@@ -74,7 +74,7 @@ a, a:visited {
 }
 
 .started::before {
-  background-image: url("arrows.svg");
+  background-image: url("img/arrows.svg");
 }
 
 .errored {
@@ -90,7 +90,7 @@ a, a:visited {
 }
 
 .errored::before { 
-  background-image: url("thunder.svg");
+  background-image: url("img/thunder.svg");
   animation: bounce 4s infinite linear;
 }
 
@@ -105,7 +105,7 @@ a, a:visited {
 }
 
 .failed::before {
-  background-image: url("cloud.svg");
+  background-image: url("img/cloud.svg");
   animation: shuffle 3s infinite ease-in-out;
 }
 
@@ -115,7 +115,7 @@ a, a:visited {
 
 .config-button {
   background-color: transparent;
-  background-image: url('tool.svg');
+  background-image: url('img/tool.svg');
   background-repeat: none;
   background-size: contain;
   border: 0;
@@ -213,7 +213,7 @@ a, a:visited {
 
 button.config-close-button {
   background-color: transparent;
-  background-image: url('circle-white.svg');
+  background-image: url('img/circle-white.svg');
   background-size: 100%;
   border: 0;
   cursor: pointer;
