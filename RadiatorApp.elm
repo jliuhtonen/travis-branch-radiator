@@ -1,7 +1,6 @@
-module RadiatorApp where
-import StartApp
-import Effects exposing (Never)
-import Html exposing (Html)
+module RadiatorApp exposing (..)
+
+import Html.App as Html
 import Task exposing (Task)
 import Time exposing (..)
 import RadiatorModel as Model
@@ -12,37 +11,27 @@ defaultConfig = { apiKey = Nothing, repositories =
   ["elm-lang/elm-compiler", "elm-lang/core"] }
 
 
-config: Model.Configuration
-config = Maybe.withDefault defaultConfig loadConfiguration
+config: Maybe Model.Configuration -> Model.Configuration
+config loadedConfig = Maybe.withDefault defaultConfig loadedConfig
 
-initialConfigPanel: Model.ConfigPanel
-initialConfigPanel =
+
+initialConfigPanel: Model.Configuration -> Model.ConfigPanel
+initialConfigPanel config =
   {
     repositorySlug = "",
     apiKeyValue = Maybe.withDefault "" config.apiKey
   }
 
+main : Program { localStorageCfg: Maybe Model.Configuration }
+main = 
+  Html.programWithFlags { init = initialize, view = View.view, update = Update.update, subscriptions = \_ -> timedUpdate }
 
-initialModel = Model.Model Model.Config config initialConfigPanel []
+initialize : { localStorageCfg: Maybe Model.Configuration } -> (Model.Model, Cmd Model.Msg)
+initialize { localStorageCfg } =
+ let config = Maybe.withDefault defaultConfig localStorageCfg
+     model = Model.Model Model.Config config (initialConfigPanel config) []
+ in (model, Update.refreshBuilds config)
+ 
 
-
-app = StartApp.start { init = (initialModel, Update.refreshBuilds config), view = View.view, update = Update.update, inputs = [timedUpdate] }
-
-
-main : Signal Html
-main = app.html
-
-
-timedUpdate : Signal Model.Action
-timedUpdate = Signal.map (\_ -> Model.RefreshBuilds) (every (30 * second))
-
-
-port tasks : Signal (Task.Task Never ())
-port tasks = app.tasks
-
-
-port loadConfiguration: Maybe Model.Configuration
-
-
-port saveConfiguration: Signal Model.Configuration
-port saveConfiguration = Signal.map (\model -> model.configuration) app.model
+timedUpdate : Sub Model.Msg
+timedUpdate = every (30 * second) (\_ -> Model.RefreshBuilds)

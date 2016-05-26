@@ -1,32 +1,32 @@
-module RadiatorUpdate(update, refreshBuilds) where
+module RadiatorUpdate exposing (update, refreshBuilds)
 
 import String
 import Task
-import Effects exposing (Effects)
+import Platform.Cmd exposing (Cmd)
+import Ports
 
 import Travis
 import RadiatorModel as Model exposing (..)
 import Util
 
-
-update : Action -> Model -> (Model, Effects Action)
+update : Msg -> Model -> (Model, Cmd Msg)
 update action model =
   case action of
      RefreshBuilds ->
        (model, refreshBuilds model.configuration)
 
      NewBuildStatus (Just builds) ->
-       (refreshModelBuildState builds model, Effects.none)
+       (refreshModelBuildState builds model, Cmd.none)
 
-     NewBuildStatus Nothing -> (model, Effects.none)
+     NewBuildStatus Nothing -> (model, Cmd.none)
 
      FlipConfigMode ->
-       ({ model | mode = (flipAppMode model.mode) }, Effects.none)
+       ({ model | mode = (flipAppMode model.mode) }, Cmd.none)
 
      UpdateRepositoryField repository ->
        let cfg = model.configPanel
            configView = { cfg | repositorySlug = repository }
-       in ({ model | configPanel = configView }, Effects.none)
+       in ({ model | configPanel = configView }, Cmd.none)
 
      AddRepository ->
        let currentConfig = model.configuration
@@ -48,17 +48,17 @@ update action model =
      UpdateApiKeyField key ->
        let cfg = model.configPanel
            configView = { cfg | apiKeyValue = key }
-       in ({ model | configPanel = configView }, Effects.none)
+       in ({ model | configPanel = configView }, Cmd.none)
 
      SaveApiKey -> 
        updateConfig (\cfg -> {cfg | apiKey = (Just model.configPanel.apiKeyValue)}) model
 
 
-updateConfig: (Configuration -> Configuration) -> Model -> (Model, Effects Action)
+updateConfig: (Configuration -> Configuration) -> Model -> (Model, Cmd Msg)
 updateConfig f model =
   let cfg = model.configuration
       updatedModel = { model | configuration = f cfg }
-  in (updatedModel, refreshBuilds updatedModel.configuration)
+  in (updatedModel, Ports.saveConfiguration updatedModel.configuration)
 
 
 refreshModelBuildState: List (String, Travis.BranchStatus) -> Model -> Model 
@@ -84,13 +84,13 @@ combineAsBuildStatus: Travis.BranchBuild -> Travis.Commit -> BuildStatus
 combineAsBuildStatus { state } { branch } = { state = state, branch = branch }
 
 
-refreshBuilds : Configuration -> Effects Action 
+refreshBuilds : Configuration -> Cmd Msg 
 refreshBuilds { apiKey, repositories } =
   let repositoryTasks repository = Travis.getBranchBuildStatus apiKey repository
   in List.map repositoryTasks repositories
         |> Task.sequence
-        |> Task.map (NewBuildStatus << Util.sequence)
-        |> Effects.task
+        |> Task.map Util.sequence
+        |> Task.perform NewBuildStatus NewBuildStatus
 
 
 flipAppMode: AppMode -> AppMode

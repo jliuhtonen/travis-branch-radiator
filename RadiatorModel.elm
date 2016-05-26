@@ -1,9 +1,9 @@
-module RadiatorModel where
+module RadiatorModel exposing (..)
 
 import Travis
 
 
-type Action = RefreshBuilds 
+type Msg = RefreshBuilds 
             | NewBuildStatus (Maybe (List (String, Travis.BranchStatus)))
             | FlipConfigMode 
             | UpdateRepositoryField String

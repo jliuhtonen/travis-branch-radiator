@@ -18,7 +18,7 @@
       var savedConfiguration = localStorage.getItem(localStorageKey)
       var config = savedConfiguration ? JSON.parse(savedConfiguration) : null
       var appElem = document.getElementById('app');
-      var app = Elm.embed(Elm.RadiatorApp, appElem, { loadConfiguration: config })
+      var app = Elm.RadiatorApp.embed(appElem, { localStorageCfg: config })
       app.ports.saveConfiguration.subscribe(function(newConfig) {
         localStorage.setItem(localStorageKey, JSON.stringify(newConfig))
         })

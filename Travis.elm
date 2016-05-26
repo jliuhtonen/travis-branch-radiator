@@ -1,4 +1,4 @@
-module Travis where
+module Travis exposing (..)
 
 import Json.Decode exposing (..)
 import Http
