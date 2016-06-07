@@ -4,7 +4,7 @@ import Travis
 
 
 type Msg = RefreshBuilds 
-            | NewBuildStatus (Maybe (List (String, Travis.BranchStatus)))
+            | NewBuildStatus (Maybe (String, Travis.BranchStatus))
             | FlipConfigMode 
             | UpdateRepositoryField String
             | AddRepository

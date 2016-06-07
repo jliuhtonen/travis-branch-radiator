@@ -15,8 +15,8 @@ update action model =
      RefreshBuilds ->
        (model, refreshBuilds model.configuration)
 
-     NewBuildStatus (Just builds) ->
-       (refreshModelBuildState builds model, Cmd.none)
+     NewBuildStatus (Just build) ->
+       (refreshModelBuildState build model, Cmd.none)
 
      NewBuildStatus Nothing -> (model, Cmd.none)
 
@@ -64,10 +64,14 @@ updateConfigurationCmd: Model.Configuration -> Cmd Msg
 updateConfigurationCmd config =
   Cmd.batch [Ports.saveConfiguration config, refreshBuilds config]
 
-refreshModelBuildState: List (String, Travis.BranchStatus) -> Model -> Model 
-refreshModelBuildState updatedBranchStatuses model =
-  let radiatorStatuses = List.concatMap (toRadiatorStatusList << toBuildStatusList) updatedBranchStatuses
-  in { model | buildStatus = radiatorStatuses }
+refreshModelBuildState: (String, Travis.BranchStatus) -> Model -> Model 
+refreshModelBuildState newStatus model =
+  let newBuildStatuses = toRadiatorStatusList <| toBuildStatusList newStatus
+      radiatorStatuses = 
+        List.filter (\x -> x.repository /= fst newStatus) model.buildStatus
+         |> List.append newBuildStatuses
+      updatedBuildStatus = List.concatMap (\r -> List.filter (\s -> s.repository == r) radiatorStatuses) model.configuration.repositories
+  in { model | buildStatus = updatedBuildStatus }
 
 
 toRadiatorStatusList: (String, List BuildStatus) -> List RadiatorStatus
@@ -91,9 +95,8 @@ refreshBuilds : Configuration -> Cmd Msg
 refreshBuilds { apiKey, repositories } =
   let repositoryTasks repository = Travis.getBranchBuildStatus apiKey repository
   in List.map repositoryTasks repositories
-        |> Task.sequence
-        |> Task.map Util.sequence
-        |> Task.perform NewBuildStatus NewBuildStatus
+        |> List.map (Task.perform NewBuildStatus NewBuildStatus)
+        |> Cmd.batch
 
 
 flipAppMode: AppMode -> AppMode

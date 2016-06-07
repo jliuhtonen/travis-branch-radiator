@@ -8240,15 +8240,11 @@ var _user$project$Radiator_Update$refreshBuilds = function (_p1) {
 	var repositoryTasks = function (repository) {
 		return A2(_user$project$Travis$getBranchBuildStatus, _p2.apiKey, repository);
 	};
-	return A3(
-		_elm_lang$core$Task$perform,
-		_user$project$Radiator_Model$NewBuildStatus,
-		_user$project$Radiator_Model$NewBuildStatus,
+	return _elm_lang$core$Platform_Cmd$batch(
 		A2(
-			_elm_lang$core$Task$map,
-			_user$project$Util$sequence,
-			_elm_lang$core$Task$sequence(
-				A2(_elm_lang$core$List$map, repositoryTasks, _p2.repositories))));
+			_elm_lang$core$List$map,
+			A2(_elm_lang$core$Task$perform, _user$project$Radiator_Model$NewBuildStatus, _user$project$Radiator_Model$NewBuildStatus),
+			A2(_elm_lang$core$List$map, repositoryTasks, _p2.repositories)));
 };
 var _user$project$Radiator_Update$combineAsBuildStatus = F2(
 	function (_p4, _p3) {
@@ -8293,17 +8289,34 @@ var _user$project$Radiator_Update$toRadiatorStatusList = function (_p9) {
 	}
 };
 var _user$project$Radiator_Update$refreshModelBuildState = F2(
-	function (updatedBranchStatuses, model) {
+	function (newStatus, model) {
+		var newBuildStatuses = _user$project$Radiator_Update$toRadiatorStatusList(
+			_user$project$Radiator_Update$toBuildStatusList(newStatus));
 		var radiatorStatuses = A2(
+			_elm_lang$core$List$append,
+			newBuildStatuses,
+			A2(
+				_elm_lang$core$List$filter,
+				function (x) {
+					return !_elm_lang$core$Native_Utils.eq(
+						x.repository,
+						_elm_lang$core$Basics$fst(newStatus));
+				},
+				model.buildStatus));
+		var updatedBuildStatus = A2(
 			_elm_lang$core$List$concatMap,
-			function (_p13) {
-				return _user$project$Radiator_Update$toRadiatorStatusList(
-					_user$project$Radiator_Update$toBuildStatusList(_p13));
+			function (r) {
+				return A2(
+					_elm_lang$core$List$filter,
+					function (s) {
+						return _elm_lang$core$Native_Utils.eq(s.repository, r);
+					},
+					radiatorStatuses);
 			},
-			updatedBranchStatuses);
+			model.configuration.repositories);
 		return _elm_lang$core$Native_Utils.update(
 			model,
-			{buildStatus: radiatorStatuses});
+			{buildStatus: updatedBuildStatus});
 	});
 var _user$project$Radiator_Update$updateConfigurationCmd = function (config) {
 	return _elm_lang$core$Platform_Cmd$batch(
@@ -8329,8 +8342,8 @@ var _user$project$Radiator_Update$updateConfig = F2(
 	});
 var _user$project$Radiator_Update$update = F2(
 	function (action, model) {
-		var _p14 = action;
-		switch (_p14.ctor) {
+		var _p13 = action;
+		switch (_p13.ctor) {
 			case 'RefreshBuilds':
 				return {
 					ctor: '_Tuple2',
@@ -8338,10 +8351,10 @@ var _user$project$Radiator_Update$update = F2(
 					_1: _user$project$Radiator_Update$refreshBuilds(model.configuration)
 				};
 			case 'NewBuildStatus':
-				if (_p14._0.ctor === 'Just') {
+				if (_p13._0.ctor === 'Just') {
 					return {
 						ctor: '_Tuple2',
-						_0: A2(_user$project$Radiator_Update$refreshModelBuildState, _p14._0._0, model),
+						_0: A2(_user$project$Radiator_Update$refreshModelBuildState, _p13._0._0, model),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				} else {
@@ -8361,7 +8374,7 @@ var _user$project$Radiator_Update$update = F2(
 				var cfg = model.configPanel;
 				var configView = _elm_lang$core$Native_Utils.update(
 					cfg,
-					{repositorySlug: _p14._0});
+					{repositorySlug: _p13._0});
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -8396,7 +8409,7 @@ var _user$project$Radiator_Update$update = F2(
 				var newRepositories = A2(
 					_elm_lang$core$List$filter,
 					function (r) {
-						return !_elm_lang$core$Native_Utils.eq(r, _p14._0);
+						return !_elm_lang$core$Native_Utils.eq(r, _p13._0);
 					},
 					model.configuration.repositories);
 				return A2(
@@ -8408,7 +8421,7 @@ var _user$project$Radiator_Update$update = F2(
 					},
 					model);
 			case 'TogglePrivateTravis':
-				var newApiKey = _p14._0 ? _elm_lang$core$Maybe$Just(model.configPanel.apiKeyValue) : _elm_lang$core$Maybe$Nothing;
+				var newApiKey = _p13._0 ? _elm_lang$core$Maybe$Just(model.configPanel.apiKeyValue) : _elm_lang$core$Maybe$Nothing;
 				return A2(
 					_user$project$Radiator_Update$updateConfig,
 					function (cfg) {
@@ -8421,7 +8434,7 @@ var _user$project$Radiator_Update$update = F2(
 				var cfg = model.configPanel;
 				var configView = _elm_lang$core$Native_Utils.update(
 					cfg,
-					{apiKeyValue: _p14._0});
+					{apiKeyValue: _p13._0});
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
