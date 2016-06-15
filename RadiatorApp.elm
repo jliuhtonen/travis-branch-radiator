@@ -7,6 +7,9 @@ import Radiator.Model as Model
 import Radiator.View as View
 import Radiator.Update as Update
 
+refreshInterval: Time 
+refreshInterval= 30 * second
+
 defaultConfig = { apiKey = Nothing, repositories =
   ["elm-lang/elm-compiler", "elm-lang/core"] }
 
@@ -30,4 +33,4 @@ initialize { localStorageCfg } =
  
 
 timedUpdate : Sub Model.Msg
-timedUpdate = every (30 * second) (\_ -> Model.RefreshBuilds)
+timedUpdate = every refreshInterval (\_ -> Model.RefreshBuilds)

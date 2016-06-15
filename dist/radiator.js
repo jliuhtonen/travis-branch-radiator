@@ -8785,12 +8785,6 @@ var _user$project$Radiator_View$view = function (model) {
 			]));
 };
 
-var _user$project$RadiatorApp$timedUpdate = A2(
-	_elm_lang$core$Time$every,
-	30 * _elm_lang$core$Time$second,
-	function (_p0) {
-		return _user$project$Radiator_Model$RefreshBuilds;
-	});
 var _user$project$RadiatorApp$initialConfigPanel = function (config) {
 	return {
 		repositorySlug: '',
@@ -8802,9 +8796,9 @@ var _user$project$RadiatorApp$defaultConfig = {
 	repositories: _elm_lang$core$Native_List.fromArray(
 		['elm-lang/elm-compiler', 'elm-lang/core'])
 };
-var _user$project$RadiatorApp$initialize = function (_p1) {
-	var _p2 = _p1;
-	var config = A2(_elm_lang$core$Maybe$withDefault, _user$project$RadiatorApp$defaultConfig, _p2.localStorageCfg);
+var _user$project$RadiatorApp$initialize = function (_p0) {
+	var _p1 = _p0;
+	var config = A2(_elm_lang$core$Maybe$withDefault, _user$project$RadiatorApp$defaultConfig, _p1.localStorageCfg);
 	var model = A4(
 		_user$project$Radiator_Model$Model,
 		_user$project$Radiator_Model$Config,
@@ -8818,6 +8812,13 @@ var _user$project$RadiatorApp$initialize = function (_p1) {
 		_1: _user$project$Radiator_Update$refreshBuilds(config)
 	};
 };
+var _user$project$RadiatorApp$refreshInterval = 30 * _elm_lang$core$Time$second;
+var _user$project$RadiatorApp$timedUpdate = A2(
+	_elm_lang$core$Time$every,
+	_user$project$RadiatorApp$refreshInterval,
+	function (_p2) {
+		return _user$project$Radiator_Model$RefreshBuilds;
+	});
 var _user$project$RadiatorApp$main = {
 	main: _elm_lang$html$Html_App$programWithFlags(
 		{
