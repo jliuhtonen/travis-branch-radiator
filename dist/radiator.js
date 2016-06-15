@@ -8185,42 +8185,13 @@ var _user$project$Radiator_Ports$saveConfiguration = _elm_lang$core$Native_Platf
 		};
 	});
 
-var _user$project$Util$sequence$ = F2(
-	function (xs, acc) {
-		var _p0 = xs;
-		if (_p0.ctor === '[]') {
-			return _elm_lang$trampoline$Trampoline$done(
-				_elm_lang$core$Maybe$Just(
-					_elm_lang$core$List$reverse(acc)));
-		} else {
-			if (_p0._0.ctor === 'Just') {
-				return _elm_lang$trampoline$Trampoline$jump(
-					function (_p1) {
-						return A2(
-							_user$project$Util$sequence$,
-							_p0._1,
-							A2(_elm_lang$core$List_ops['::'], _p0._0._0, acc));
-					});
-			} else {
-				return _elm_lang$trampoline$Trampoline$done(_elm_lang$core$Maybe$Nothing);
-			}
-		}
-	});
-var _user$project$Util$sequence = function (xs) {
-	return _elm_lang$trampoline$Trampoline$evaluate(
-		A2(
-			_user$project$Util$sequence$,
-			xs,
-			_elm_lang$core$Native_List.fromArray(
-				[])));
-};
 var _user$project$Util$singleton = function (x) {
 	return _elm_lang$core$Native_List.fromArray(
 		[x]);
 };
 var _user$project$Util$isJust = function (m) {
-	var _p2 = m;
-	if (_p2.ctor === 'Just') {
+	var _p0 = m;
+	if (_p0.ctor === 'Just') {
 		return true;
 	} else {
 		return false;

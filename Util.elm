@@ -1,4 +1,4 @@
-module Util exposing (isJust, sequence, singleton)
+module Util exposing (isJust, singleton)
 
 import Maybe
 import List
@@ -15,15 +15,3 @@ isJust m =
 
 singleton: a -> List a
 singleton x = [x]
-
-
-sequence: List (Maybe a) -> Maybe (List a)
-sequence xs = evaluate (sequence' xs [])
-
-
-sequence': List (Maybe a) -> List a -> Trampoline (Maybe (List a))
-sequence' xs acc = 
-  case xs of
-    [] -> done (Just (List.reverse acc))
-    Just x :: xs -> jump (\_ -> sequence' xs (x :: acc))
-    Nothing :: xs -> done Nothing
