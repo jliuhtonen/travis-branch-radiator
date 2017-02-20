@@ -1,10 +1,11 @@
 module Radiator.Model exposing (..)
 
 import Travis
+import Http as Http
 
 
 type Msg = RefreshBuilds 
-            | NewBuildStatus (Maybe (String, Travis.BranchStatus))
+            | NewBuildStatus (Result Http.Error (String, Travis.BranchStatus))
             | FlipConfigMode 
             | UpdateRepositoryField String
             | AddRepository

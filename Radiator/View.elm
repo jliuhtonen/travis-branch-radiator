@@ -65,7 +65,7 @@ repositoryInput repositorySlug =
   H.div [] [
     H.label [A.for "add-repository"] [H.text "Add a new repository"],
     H.div [A.class "config-panel-control-row"] [
-      H.input [A.type' "text", A.id "add-repository", A.value repositorySlug, E.onInput UpdateRepositoryField] [] ,
+      H.input [A.type_ "text", A.id "add-repository", A.value repositorySlug, E.onInput UpdateRepositoryField] [] ,
       H.button [E.onClick AddRepository] [H.text "Add"]
       ]]
 
@@ -74,7 +74,7 @@ usePrivateTravisInput: Bool -> Html Msg
 usePrivateTravisInput private =
   H.div [A.class "config-panel-control-row"] [
     H.input [A.id "use-private-travis-checkbox", 
-        A.type' "checkbox", 
+        A.type_ "checkbox",
         A.checked private,
         E.onCheck TogglePrivateTravis] [],
     H.label [A.for "use-private-travis-checkbox"] [H.text "Use private Travis"]
@@ -86,7 +86,7 @@ apiKeyInput apiKey =
   H.div [] [
     H.label [A.for "api-key-field"] [H.text "Private Travis API key:"],
     H.div [A.class "config-panel-control-row"] [
-      H.input [A.type' "text", A.id "api-key-field", A.value apiKey, E.onInput UpdateApiKeyField] [],
+      H.input [A.type_ "text", A.id "api-key-field", A.value apiKey, E.onInput UpdateApiKeyField] [],
       H.button [E.onClick SaveApiKey] [ H.text "Set" ]
       ]]
 

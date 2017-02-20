@@ -1,6 +1,6 @@
 module RadiatorApp exposing (..)
 
-import Html.App as Html
+import Html
 import Task exposing (Task)
 import Time exposing (..)
 import Radiator.Model as Model
@@ -21,7 +21,7 @@ initialConfigPanel config =
     apiKeyValue = Maybe.withDefault "" config.apiKey
   }
 
-main : Program { localStorageCfg: Maybe Model.Configuration }
+main : Program { localStorageCfg: Maybe Model.Configuration } Model.Model Model.Msg
 main = 
   Html.programWithFlags { init = initialize, view = View.view, update = Update.update, subscriptions = \_ -> timedUpdate }
 

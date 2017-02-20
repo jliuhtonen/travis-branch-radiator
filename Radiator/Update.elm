@@ -1,7 +1,9 @@
 module Radiator.Update exposing (update, refreshBuilds)
 
 import String
+import Result
 import Task
+import Http
 import Platform.Cmd exposing (Cmd)
 import Radiator.Ports as Ports
 
@@ -15,10 +17,10 @@ update action model =
      RefreshBuilds ->
        (model, refreshBuilds model.configuration)
 
-     NewBuildStatus (Just build) ->
+     NewBuildStatus (Ok build) ->
        (refreshModelBuildState build model, Cmd.none)
 
-     NewBuildStatus Nothing -> (model, Cmd.none)
+     NewBuildStatus (Err _) -> (model, Cmd.none)
 
      FlipConfigMode ->
        ({ model | mode = (flipAppMode model.mode) }, Cmd.none)
@@ -68,7 +70,7 @@ refreshModelBuildState: (String, Travis.BranchStatus) -> Model -> Model
 refreshModelBuildState newStatus model =
   let newBuildStatuses = toRadiatorStatusList <| toBuildStatusList newStatus
       radiatorStatuses = 
-        List.filter (\x -> x.repository /= fst newStatus) model.buildStatus
+        List.filter (\x -> x.repository /= Tuple.first newStatus) model.buildStatus
          |> List.append newBuildStatuses
       updatedBuildStatus = List.concatMap (\r -> List.filter (\s -> s.repository == r) radiatorStatuses) model.configuration.repositories
   in { model | buildStatus = updatedBuildStatus }
@@ -93,10 +95,10 @@ combineAsBuildStatus { state } { branch } = { state = state, branch = branch }
 
 refreshBuilds : Configuration -> Cmd Msg 
 refreshBuilds { apiKey, repositories } =
-  let repositoryTasks repository = Travis.getBranchBuildStatus apiKey repository
+  let repositoryTasks repository =
+    Http.send NewBuildStatus (Travis.getBranchBuildStatus apiKey repository)
   in List.map repositoryTasks repositories
-        |> List.map (Task.perform NewBuildStatus NewBuildStatus)
-        |> Cmd.batch
+    |> Cmd.batch
 
 
 flipAppMode: AppMode -> AppMode
