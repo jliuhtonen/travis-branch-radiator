@@ -43,7 +43,8 @@ type alias ConfigPanel = {
 
 type alias BuildStatus = {
   branch: String,
-  state: String
+  state: String,
+  buildNumber: Int
 }
 
 

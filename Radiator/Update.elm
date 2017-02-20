@@ -85,12 +85,21 @@ toRadiatorStatusList (repository, branchBuildStatuses) =
 
 
 toBuildStatusList: (String, Travis.BranchStatus) -> (String, List BuildStatus)
-toBuildStatusList (repositoryName, {branches, commits}) = 
-  (repositoryName, List.map2 combineAsBuildStatus branches commits)
+toBuildStatusList = Tuple.mapSecond sortCombineBuildData
+
+
+sortCombineBuildData: Travis.BranchStatus -> List BuildStatus
+sortCombineBuildData {branches, commits} =
+  List.map2 combineAsBuildStatus branches commits
+    |> List.sortWith compareBuildNumberDesc
 
 
 combineAsBuildStatus: Travis.BranchBuild -> Travis.Commit -> BuildStatus
-combineAsBuildStatus { state } { branch } = { state = state, branch = branch }
+combineAsBuildStatus { state, number } { branch } = {
+    state = state,
+    branch = branch,
+    buildNumber = Result.withDefault -1 (String.toInt number)
+  }
 
 
 refreshBuilds : Configuration -> Cmd Msg 
@@ -105,3 +114,9 @@ flipAppMode: AppMode -> AppMode
 flipAppMode mode = case mode of 
   Monitoring -> Config
   Config -> Monitoring
+
+compareBuildNumberDesc: BuildStatus -> BuildStatus -> Order
+compareBuildNumberDesc a b = case compare a.buildNumber b.buildNumber of
+  LT -> GT
+  EQ -> EQ
+  GT -> LT
