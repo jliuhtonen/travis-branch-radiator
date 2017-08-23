@@ -1,6 +1,8 @@
 module Radiator.Update exposing (update, refreshBuilds)
 
 import String
+import List
+import Dict exposing (Dict)
 import Result
 import Task
 import Http
@@ -90,17 +92,17 @@ toBuildStatusList = Tuple.mapSecond sortCombineBuildData
 
 sortCombineBuildData: Travis.BranchStatus -> List BuildStatus
 sortCombineBuildData {branches, commits} =
-  List.map2 combineAsBuildStatus branches commits
+  let idsToCommits = Dict.fromList <| List.map (\c -> (c.id, c)) commits
+  in List.concatMap (combineAsBuildStatus idsToCommits) branches
     |> List.sortWith compareBuildNumberDesc
 
 
-combineAsBuildStatus: Travis.BranchBuild -> Travis.Commit -> BuildStatus
-combineAsBuildStatus { state, number } { branch } = {
-    state = state,
-    branch = branch,
-    buildNumber = Result.withDefault -1 (String.toInt number)
-  }
-
+combineAsBuildStatus: Dict Int Travis.Commit -> Travis.BranchBuild -> List BuildStatus
+combineAsBuildStatus idsToCommits { state, number, commitId } =
+  let buildNumber = Result.withDefault -1 <| String.toInt number
+  in Dict.get commitId idsToCommits
+    |> Maybe.map(\commit -> { state = state, branch = commit.branch, buildNumber = buildNumber })
+    |> Util.listFromMaybe
 
 refreshBuilds : Configuration -> Cmd Msg 
 refreshBuilds { apiKey, repositories } =

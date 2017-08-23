@@ -9215,6 +9215,12 @@ var _user$project$Util$singleton = function (x) {
 		_1: {ctor: '[]'}
 	};
 };
+var _user$project$Util$listFromMaybe = function (m) {
+	return A2(
+		_elm_lang$core$Maybe$withDefault,
+		{ctor: '[]'},
+		A2(_elm_lang$core$Maybe$map, _user$project$Util$singleton, m));
+};
 var _user$project$Util$isJust = function (m) {
 	var _p0 = m;
 	if (_p0.ctor === 'Just') {
@@ -9256,40 +9262,52 @@ var _user$project$Radiator_Update$refreshBuilds = function (_p2) {
 		A2(_elm_lang$core$List$map, repositoryTasks, _p3.repositories));
 };
 var _user$project$Radiator_Update$combineAsBuildStatus = F2(
-	function (_p5, _p4) {
-		var _p6 = _p5;
-		var _p7 = _p4;
-		return {
-			state: _p6.state,
-			branch: _p7.branch,
-			buildNumber: A2(
-				_elm_lang$core$Result$withDefault,
-				-1,
-				_elm_lang$core$String$toInt(_p6.number))
-		};
+	function (idsToCommits, _p4) {
+		var _p5 = _p4;
+		var buildNumber = A2(
+			_elm_lang$core$Result$withDefault,
+			-1,
+			_elm_lang$core$String$toInt(_p5.number));
+		return _user$project$Util$listFromMaybe(
+			A2(
+				_elm_lang$core$Maybe$map,
+				function (commit) {
+					return {state: _p5.state, branch: commit.branch, buildNumber: buildNumber};
+				},
+				A2(_elm_lang$core$Dict$get, _p5.commitId, idsToCommits)));
 	});
-var _user$project$Radiator_Update$sortCombineBuildData = function (_p8) {
-	var _p9 = _p8;
+var _user$project$Radiator_Update$sortCombineBuildData = function (_p6) {
+	var _p7 = _p6;
+	var idsToCommits = _elm_lang$core$Dict$fromList(
+		A2(
+			_elm_lang$core$List$map,
+			function (c) {
+				return {ctor: '_Tuple2', _0: c.id, _1: c};
+			},
+			_p7.commits));
 	return A2(
 		_elm_lang$core$List$sortWith,
 		_user$project$Radiator_Update$compareBuildNumberDesc,
-		A3(_elm_lang$core$List$map2, _user$project$Radiator_Update$combineAsBuildStatus, _p9.branches, _p9.commits));
+		A2(
+			_elm_lang$core$List$concatMap,
+			_user$project$Radiator_Update$combineAsBuildStatus(idsToCommits),
+			_p7.branches));
 };
 var _user$project$Radiator_Update$toBuildStatusList = _elm_lang$core$Tuple$mapSecond(_user$project$Radiator_Update$sortCombineBuildData);
-var _user$project$Radiator_Update$toRadiatorStatusList = function (_p10) {
-	var _p11 = _p10;
-	var _p13 = _p11._0;
+var _user$project$Radiator_Update$toRadiatorStatusList = function (_p8) {
+	var _p9 = _p8;
+	var _p11 = _p9._0;
 	var nonPassed = A2(
 		_elm_lang$core$List$filter,
 		function (build) {
 			return !_elm_lang$core$Native_Utils.eq(build.state, 'passed');
 		},
-		A2(_elm_lang$core$List$take, 5, _p11._1));
-	var _p12 = nonPassed;
-	if (_p12.ctor === '[]') {
+		A2(_elm_lang$core$List$take, 5, _p9._1));
+	var _p10 = nonPassed;
+	if (_p10.ctor === '[]') {
 		return {
 			ctor: '::',
-			_0: A3(_user$project$Radiator_Model$RadiatorStatus, _p13, _elm_lang$core$Maybe$Nothing, 'passed'),
+			_0: A3(_user$project$Radiator_Model$RadiatorStatus, _p11, _elm_lang$core$Maybe$Nothing, 'passed'),
 			_1: {ctor: '[]'}
 		};
 	} else {
@@ -9298,7 +9316,7 @@ var _user$project$Radiator_Update$toRadiatorStatusList = function (_p10) {
 			function (build) {
 				return A3(
 					_user$project$Radiator_Model$RadiatorStatus,
-					_p13,
+					_p11,
 					_elm_lang$core$Maybe$Just(build.branch),
 					build.state);
 			},
@@ -9363,8 +9381,8 @@ var _user$project$Radiator_Update$updateConfig = F2(
 	});
 var _user$project$Radiator_Update$update = F2(
 	function (action, model) {
-		var _p14 = action;
-		switch (_p14.ctor) {
+		var _p12 = action;
+		switch (_p12.ctor) {
 			case 'RefreshBuilds':
 				return {
 					ctor: '_Tuple2',
@@ -9372,10 +9390,10 @@ var _user$project$Radiator_Update$update = F2(
 					_1: _user$project$Radiator_Update$refreshBuilds(model.configuration)
 				};
 			case 'NewBuildStatus':
-				if (_p14._0.ctor === 'Ok') {
+				if (_p12._0.ctor === 'Ok') {
 					return {
 						ctor: '_Tuple2',
-						_0: A2(_user$project$Radiator_Update$refreshModelBuildState, _p14._0._0, model),
+						_0: A2(_user$project$Radiator_Update$refreshModelBuildState, _p12._0._0, model),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				} else {
@@ -9395,7 +9413,7 @@ var _user$project$Radiator_Update$update = F2(
 				var cfg = model.configPanel;
 				var configView = _elm_lang$core$Native_Utils.update(
 					cfg,
-					{repositorySlug: _p14._0});
+					{repositorySlug: _p12._0});
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -9433,7 +9451,7 @@ var _user$project$Radiator_Update$update = F2(
 				var newRepositories = A2(
 					_elm_lang$core$List$filter,
 					function (r) {
-						return !_elm_lang$core$Native_Utils.eq(r, _p14._0);
+						return !_elm_lang$core$Native_Utils.eq(r, _p12._0);
 					},
 					model.configuration.repositories);
 				return A2(
@@ -9445,7 +9463,7 @@ var _user$project$Radiator_Update$update = F2(
 					},
 					model);
 			case 'TogglePrivateTravis':
-				var newApiKey = _p14._0 ? _elm_lang$core$Maybe$Just(model.configPanel.apiKeyValue) : _elm_lang$core$Maybe$Nothing;
+				var newApiKey = _p12._0 ? _elm_lang$core$Maybe$Just(model.configPanel.apiKeyValue) : _elm_lang$core$Maybe$Nothing;
 				return A2(
 					_user$project$Radiator_Update$updateConfig,
 					function (cfg) {
@@ -9458,7 +9476,7 @@ var _user$project$Radiator_Update$update = F2(
 				var cfg = model.configPanel;
 				var configView = _elm_lang$core$Native_Utils.update(
 					cfg,
-					{apiKeyValue: _p14._0});
+					{apiKeyValue: _p12._0});
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(

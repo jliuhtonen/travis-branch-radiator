@@ -1,4 +1,4 @@
-module Util exposing (isJust, singleton)
+module Util exposing (isJust, singleton, listFromMaybe)
 
 import Maybe
 import List
@@ -11,6 +11,11 @@ isJust m =
   case m of 
     Just _ -> True
     Nothing -> False
+
+
+listFromMaybe: Maybe a -> List a
+listFromMaybe m =
+  Maybe.map singleton m |> Maybe.withDefault []
 
 
 singleton: a -> List a
