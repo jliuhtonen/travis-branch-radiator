@@ -10011,7 +10011,7 @@ var _user$project$RadiatorApp$initialize = function (_p0) {
 		_1: _user$project$Radiator_Update$refreshBuilds(config)
 	};
 };
-var _user$project$RadiatorApp$refreshInterval = 10 * _elm_lang$core$Time$second;
+var _user$project$RadiatorApp$refreshInterval = 30 * _elm_lang$core$Time$second;
 var _user$project$RadiatorApp$timedUpdate = A2(
 	_elm_lang$core$Time$every,
 	_user$project$RadiatorApp$refreshInterval,

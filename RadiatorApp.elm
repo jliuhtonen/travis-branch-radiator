@@ -8,7 +8,7 @@ import Radiator.View as View
 import Radiator.Update as Update
 
 refreshInterval: Time 
-refreshInterval= 10 * second
+refreshInterval= 30 * second
 
 defaultConfig = { apiKey = Nothing, repositories =
   ["elm-lang/elm-compiler", "elm-lang/core"] }
