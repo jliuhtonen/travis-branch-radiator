@@ -5,7 +5,7 @@ import Http as Http
 
 
 type Msg = RefreshBuilds 
-            | NewBuildStatus (Result Http.Error (String, Travis.BranchStatus))
+            | NewBuildStatus (Result Http.Error (String, List Travis.Branch))
             | FlipConfigMode 
             | UpdateRepositoryField String
             | AddRepository

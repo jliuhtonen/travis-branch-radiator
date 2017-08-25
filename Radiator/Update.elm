@@ -68,9 +68,9 @@ updateConfigurationCmd: Model.Configuration -> Cmd Msg
 updateConfigurationCmd config =
   Cmd.batch [Ports.saveConfiguration config, refreshBuilds config]
 
-refreshModelBuildState: (String, Travis.BranchStatus) -> Model -> Model 
+refreshModelBuildState: (String, List Travis.Branch) -> Model -> Model
 refreshModelBuildState newStatus model =
-  let newBuildStatuses = toRadiatorStatusList <| toBuildStatusList newStatus
+  let newBuildStatuses = toRadiatorStatusList newStatus
       radiatorStatuses = 
         List.filter (\x -> x.repository /= Tuple.first newStatus) model.buildStatus
          |> List.append newBuildStatuses
@@ -78,31 +78,13 @@ refreshModelBuildState newStatus model =
   in { model | buildStatus = updatedBuildStatus }
 
 
-toRadiatorStatusList: (String, List BuildStatus) -> List RadiatorStatus
-toRadiatorStatusList (repository, branchBuildStatuses) =
-  let nonPassed = List.filter (\build -> build.state /= "passed") (List.take 5 branchBuildStatuses)
+toRadiatorStatusList: (String, List Travis.Branch) -> List RadiatorStatus
+toRadiatorStatusList (repository, branchStatuses) =
+  let nonPassed = List.filter (\branch -> branch.lastBuild.state /= "passed" && branch.lastBuild.state /= "canceled") branchStatuses
   in case nonPassed of
     [] -> [RadiatorStatus repository Nothing "passed"]
-    xs -> List.map (\build -> RadiatorStatus repository (Just build.branch) build.state) nonPassed
+    xs -> List.map (\branch -> RadiatorStatus repository (Just branch.name) branch.lastBuild.state) nonPassed
 
-
-toBuildStatusList: (String, Travis.BranchStatus) -> (String, List BuildStatus)
-toBuildStatusList = Tuple.mapSecond sortCombineBuildData
-
-
-sortCombineBuildData: Travis.BranchStatus -> List BuildStatus
-sortCombineBuildData {branches, commits} =
-  let idsToCommits = Dict.fromList <| List.map (\c -> (c.id, c)) commits
-  in List.concatMap (combineAsBuildStatus idsToCommits) branches
-    |> List.sortWith compareBuildNumberDesc
-
-
-combineAsBuildStatus: Dict Int Travis.Commit -> Travis.BranchBuild -> List BuildStatus
-combineAsBuildStatus idsToCommits { state, number, commitId } =
-  let buildNumber = Result.withDefault -1 <| String.toInt number
-  in Dict.get commitId idsToCommits
-    |> Maybe.map(\commit -> { state = state, branch = commit.branch, buildNumber = buildNumber })
-    |> Util.listFromMaybe
 
 refreshBuilds : Configuration -> Cmd Msg 
 refreshBuilds { apiKey, repositories } =
@@ -116,9 +98,3 @@ flipAppMode: AppMode -> AppMode
 flipAppMode mode = case mode of 
   Monitoring -> Config
   Config -> Monitoring
-
-compareBuildNumberDesc: BuildStatus -> BuildStatus -> Order
-compareBuildNumberDesc a b = case compare a.buildNumber b.buildNumber of
-  LT -> GT
-  EQ -> EQ
-  GT -> LT

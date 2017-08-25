@@ -9072,7 +9072,7 @@ var _user$project$Travis$travisHeaders = function (apiKey) {
 		_elm_lang$core$List$append,
 		{
 			ctor: '::',
-			_0: A2(_elm_lang$http$Http$header, 'Accept', 'application/vnd.travis-ci.2+json'),
+			_0: A2(_elm_lang$http$Http$header, 'Travis-API-Version', '3'),
 			_1: {ctor: '[]'}
 		},
 		_user$project$Travis$getAuthHeaders(apiKey));
@@ -9098,59 +9098,56 @@ var _user$project$Travis$baseUrl = function (maybeKey) {
 		return 'https://api.travis-ci.org';
 	}
 };
-var _user$project$Travis$BranchStatus = F2(
-	function (a, b) {
-		return {branches: a, commits: b};
-	});
-var _user$project$Travis$BranchBuild = F4(
+var _user$project$Travis$BranchesResponse = function (a) {
+	return {branches: a};
+};
+var _user$project$Travis$Branch = F4(
 	function (a, b, c, d) {
-		return {id: a, commitId: b, state: c, number: d};
+		return {name: a, defaultBranch: b, existsOnGithub: c, lastBuild: d};
 	});
-var _user$project$Travis$decodeBranchBuild = A5(
+var _user$project$Travis$Build = F4(
+	function (a, b, c, d) {
+		return {id: a, number: b, state: c, eventType: d};
+	});
+var _user$project$Travis$decodeBuild = A5(
 	_elm_lang$core$Json_Decode$map4,
-	_user$project$Travis$BranchBuild,
+	_user$project$Travis$Build,
 	A2(_elm_lang$core$Json_Decode$field, 'id', _elm_lang$core$Json_Decode$int),
-	A2(_elm_lang$core$Json_Decode$field, 'commit_id', _elm_lang$core$Json_Decode$int),
+	A2(_elm_lang$core$Json_Decode$field, 'number', _elm_lang$core$Json_Decode$string),
 	A2(_elm_lang$core$Json_Decode$field, 'state', _elm_lang$core$Json_Decode$string),
-	A2(_elm_lang$core$Json_Decode$field, 'number', _elm_lang$core$Json_Decode$string));
-var _user$project$Travis$Commit = F5(
-	function (a, b, c, d, e) {
-		return {id: a, branch: b, committerName: c, committerEmail: d, message: e};
-	});
-var _user$project$Travis$decodeCommit = A6(
-	_elm_lang$core$Json_Decode$map5,
-	_user$project$Travis$Commit,
-	A2(_elm_lang$core$Json_Decode$field, 'id', _elm_lang$core$Json_Decode$int),
-	A2(_elm_lang$core$Json_Decode$field, 'branch', _elm_lang$core$Json_Decode$string),
-	A2(_elm_lang$core$Json_Decode$field, 'committer_name', _elm_lang$core$Json_Decode$string),
-	A2(_elm_lang$core$Json_Decode$field, 'committer_email', _elm_lang$core$Json_Decode$string),
-	A2(_elm_lang$core$Json_Decode$field, 'message', _elm_lang$core$Json_Decode$string));
-var _user$project$Travis$decodeBranchStatus = A3(
-	_elm_lang$core$Json_Decode$map2,
-	_user$project$Travis$BranchStatus,
+	A2(_elm_lang$core$Json_Decode$field, 'event_type', _elm_lang$core$Json_Decode$string));
+var _user$project$Travis$decodeBranch = A5(
+	_elm_lang$core$Json_Decode$map4,
+	_user$project$Travis$Branch,
+	A2(_elm_lang$core$Json_Decode$field, 'name', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'default_branch', _elm_lang$core$Json_Decode$bool),
+	A2(_elm_lang$core$Json_Decode$field, 'exists_on_github', _elm_lang$core$Json_Decode$bool),
+	A2(_elm_lang$core$Json_Decode$field, 'last_build', _user$project$Travis$decodeBuild));
+var _user$project$Travis$decodeBranchesResponse = A2(
+	_elm_lang$core$Json_Decode$map,
+	_user$project$Travis$BranchesResponse,
 	A2(
 		_elm_lang$core$Json_Decode$field,
 		'branches',
-		_elm_lang$core$Json_Decode$list(_user$project$Travis$decodeBranchBuild)),
-	A2(
-		_elm_lang$core$Json_Decode$field,
-		'commits',
-		_elm_lang$core$Json_Decode$list(_user$project$Travis$decodeCommit)));
+		_elm_lang$core$Json_Decode$list(_user$project$Travis$decodeBranch)));
 var _user$project$Travis$getBranchBuildStatus = F2(
 	function (apiKey, repositorySlug) {
 		var decoder = A2(
 			_elm_lang$core$Json_Decode$map,
 			function (result) {
-				return {ctor: '_Tuple2', _0: repositorySlug, _1: result};
+				return {ctor: '_Tuple2', _0: repositorySlug, _1: result.branches};
 			},
-			_user$project$Travis$decodeBranchStatus);
+			_user$project$Travis$decodeBranchesResponse);
 		var url = A2(
 			_elm_lang$core$Basics_ops['++'],
 			_user$project$Travis$baseUrl(apiKey),
 			A2(
 				_elm_lang$core$Basics_ops['++'],
-				'/repos/',
-				A2(_elm_lang$core$Basics_ops['++'], repositorySlug, '/branches')));
+				'/repo/',
+				A2(
+					_elm_lang$core$Basics_ops['++'],
+					_elm_lang$http$Http$encodeUri(repositorySlug),
+					'/branches')));
 		return A3(_user$project$Travis$travisApiGet, apiKey, decoder, url);
 	});
 
@@ -9230,95 +9227,50 @@ var _user$project$Util$isJust = function (m) {
 	}
 };
 
-var _user$project$Radiator_Update$compareBuildNumberDesc = F2(
-	function (a, b) {
-		var _p0 = A2(_elm_lang$core$Basics$compare, a.buildNumber, b.buildNumber);
-		switch (_p0.ctor) {
-			case 'LT':
-				return _elm_lang$core$Basics$GT;
-			case 'EQ':
-				return _elm_lang$core$Basics$EQ;
-			default:
-				return _elm_lang$core$Basics$LT;
-		}
-	});
 var _user$project$Radiator_Update$flipAppMode = function (mode) {
-	var _p1 = mode;
-	if (_p1.ctor === 'Monitoring') {
+	var _p0 = mode;
+	if (_p0.ctor === 'Monitoring') {
 		return _user$project$Radiator_Model$Config;
 	} else {
 		return _user$project$Radiator_Model$Monitoring;
 	}
 };
-var _user$project$Radiator_Update$refreshBuilds = function (_p2) {
-	var _p3 = _p2;
+var _user$project$Radiator_Update$refreshBuilds = function (_p1) {
+	var _p2 = _p1;
 	var repositoryTasks = function (repository) {
 		return A2(
 			_elm_lang$http$Http$send,
 			_user$project$Radiator_Model$NewBuildStatus,
-			A2(_user$project$Travis$getBranchBuildStatus, _p3.apiKey, repository));
+			A2(_user$project$Travis$getBranchBuildStatus, _p2.apiKey, repository));
 	};
 	return _elm_lang$core$Platform_Cmd$batch(
-		A2(_elm_lang$core$List$map, repositoryTasks, _p3.repositories));
+		A2(_elm_lang$core$List$map, repositoryTasks, _p2.repositories));
 };
-var _user$project$Radiator_Update$combineAsBuildStatus = F2(
-	function (idsToCommits, _p4) {
-		var _p5 = _p4;
-		var buildNumber = A2(
-			_elm_lang$core$Result$withDefault,
-			-1,
-			_elm_lang$core$String$toInt(_p5.number));
-		return _user$project$Util$listFromMaybe(
-			A2(
-				_elm_lang$core$Maybe$map,
-				function (commit) {
-					return {state: _p5.state, branch: commit.branch, buildNumber: buildNumber};
-				},
-				A2(_elm_lang$core$Dict$get, _p5.commitId, idsToCommits)));
-	});
-var _user$project$Radiator_Update$sortCombineBuildData = function (_p6) {
-	var _p7 = _p6;
-	var idsToCommits = _elm_lang$core$Dict$fromList(
-		A2(
-			_elm_lang$core$List$map,
-			function (c) {
-				return {ctor: '_Tuple2', _0: c.id, _1: c};
-			},
-			_p7.commits));
-	return A2(
-		_elm_lang$core$List$sortWith,
-		_user$project$Radiator_Update$compareBuildNumberDesc,
-		A2(
-			_elm_lang$core$List$concatMap,
-			_user$project$Radiator_Update$combineAsBuildStatus(idsToCommits),
-			_p7.branches));
-};
-var _user$project$Radiator_Update$toBuildStatusList = _elm_lang$core$Tuple$mapSecond(_user$project$Radiator_Update$sortCombineBuildData);
-var _user$project$Radiator_Update$toRadiatorStatusList = function (_p8) {
-	var _p9 = _p8;
-	var _p11 = _p9._0;
+var _user$project$Radiator_Update$toRadiatorStatusList = function (_p3) {
+	var _p4 = _p3;
+	var _p6 = _p4._0;
 	var nonPassed = A2(
 		_elm_lang$core$List$filter,
-		function (build) {
-			return !_elm_lang$core$Native_Utils.eq(build.state, 'passed');
+		function (branch) {
+			return (!_elm_lang$core$Native_Utils.eq(branch.lastBuild.state, 'passed')) && (!_elm_lang$core$Native_Utils.eq(branch.lastBuild.state, 'canceled'));
 		},
-		A2(_elm_lang$core$List$take, 5, _p9._1));
-	var _p10 = nonPassed;
-	if (_p10.ctor === '[]') {
+		_p4._1);
+	var _p5 = nonPassed;
+	if (_p5.ctor === '[]') {
 		return {
 			ctor: '::',
-			_0: A3(_user$project$Radiator_Model$RadiatorStatus, _p11, _elm_lang$core$Maybe$Nothing, 'passed'),
+			_0: A3(_user$project$Radiator_Model$RadiatorStatus, _p6, _elm_lang$core$Maybe$Nothing, 'passed'),
 			_1: {ctor: '[]'}
 		};
 	} else {
 		return A2(
 			_elm_lang$core$List$map,
-			function (build) {
+			function (branch) {
 				return A3(
 					_user$project$Radiator_Model$RadiatorStatus,
-					_p11,
-					_elm_lang$core$Maybe$Just(build.branch),
-					build.state);
+					_p6,
+					_elm_lang$core$Maybe$Just(branch.name),
+					branch.lastBuild.state);
 			},
 			nonPassed);
 	}
@@ -9326,7 +9278,7 @@ var _user$project$Radiator_Update$toRadiatorStatusList = function (_p8) {
 var _user$project$Radiator_Update$refreshModelBuildState = F2(
 	function (newStatus, model) {
 		var newBuildStatuses = _user$project$Radiator_Update$toRadiatorStatusList(
-			_user$project$Radiator_Update$toBuildStatusList(newStatus));
+			A2(_elm_lang$core$Debug$log, 'new status', newStatus));
 		var radiatorStatuses = A2(
 			_elm_lang$core$List$append,
 			newBuildStatuses,
@@ -9381,8 +9333,8 @@ var _user$project$Radiator_Update$updateConfig = F2(
 	});
 var _user$project$Radiator_Update$update = F2(
 	function (action, model) {
-		var _p12 = action;
-		switch (_p12.ctor) {
+		var _p7 = action;
+		switch (_p7.ctor) {
 			case 'RefreshBuilds':
 				return {
 					ctor: '_Tuple2',
@@ -9390,13 +9342,14 @@ var _user$project$Radiator_Update$update = F2(
 					_1: _user$project$Radiator_Update$refreshBuilds(model.configuration)
 				};
 			case 'NewBuildStatus':
-				if (_p12._0.ctor === 'Ok') {
+				if (_p7._0.ctor === 'Ok') {
 					return {
 						ctor: '_Tuple2',
-						_0: A2(_user$project$Radiator_Update$refreshModelBuildState, _p12._0._0, model),
+						_0: A2(_user$project$Radiator_Update$refreshModelBuildState, _p7._0._0, model),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				} else {
+					var foo = A2(_elm_lang$core$Debug$log, 'ERROR', _p7._0._0);
 					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 				}
 			case 'FlipConfigMode':
@@ -9413,7 +9366,7 @@ var _user$project$Radiator_Update$update = F2(
 				var cfg = model.configPanel;
 				var configView = _elm_lang$core$Native_Utils.update(
 					cfg,
-					{repositorySlug: _p12._0});
+					{repositorySlug: _p7._0});
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -9451,7 +9404,7 @@ var _user$project$Radiator_Update$update = F2(
 				var newRepositories = A2(
 					_elm_lang$core$List$filter,
 					function (r) {
-						return !_elm_lang$core$Native_Utils.eq(r, _p12._0);
+						return !_elm_lang$core$Native_Utils.eq(r, _p7._0);
 					},
 					model.configuration.repositories);
 				return A2(
@@ -9463,7 +9416,7 @@ var _user$project$Radiator_Update$update = F2(
 					},
 					model);
 			case 'TogglePrivateTravis':
-				var newApiKey = _p12._0 ? _elm_lang$core$Maybe$Just(model.configPanel.apiKeyValue) : _elm_lang$core$Maybe$Nothing;
+				var newApiKey = _p7._0 ? _elm_lang$core$Maybe$Just(model.configPanel.apiKeyValue) : _elm_lang$core$Maybe$Nothing;
 				return A2(
 					_user$project$Radiator_Update$updateConfig,
 					function (cfg) {
@@ -9476,7 +9429,7 @@ var _user$project$Radiator_Update$update = F2(
 				var cfg = model.configPanel;
 				var configView = _elm_lang$core$Native_Utils.update(
 					cfg,
-					{apiKeyValue: _p12._0});
+					{apiKeyValue: _p7._0});
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(

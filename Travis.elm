@@ -5,41 +5,32 @@ import Http
 import Task exposing (Task)
 import Time exposing (second)
 
-
-type alias BranchStatus = {
-  branches : List BranchBuild,
-  commits : List Commit
+type alias BranchesResponse = {
+  branches: List Branch
 }
 
-
-type alias BranchBuild = {
-  id : Int,
-  commitId : Int,
-  state: String,
-  number: String
+type alias Branch = {
+  name: String,
+  defaultBranch: Bool,
+  existsOnGithub: Bool,
+  lastBuild: Build
 }
 
-
-type alias Commit = {
+type alias Build = {
   id: Int,
-  branch: String,
-  committerName: String,
-  committerEmail: String,
-  message: String
+  number: String,
+  state: String,
+  eventType: String
 }
 
+decodeBranchesResponse: Decoder BranchesResponse
+decodeBranchesResponse = map BranchesResponse (field "branches" (list decodeBranch))
 
-decodeBranchStatus: Decoder BranchStatus
-decodeBranchStatus = map2 BranchStatus (field "branches" (list decodeBranchBuild)) (field "commits" (list decodeCommit))
+decodeBranch: Decoder Branch
+decodeBranch = map4 Branch (field "name" string) (field "default_branch" bool) (field "exists_on_github" bool) (field "last_build" decodeBuild)
 
-
-decodeBranchBuild: Decoder BranchBuild
-decodeBranchBuild = map4 BranchBuild (field "id" int) (field "commit_id" int) (field "state" string) (field "number" string)
-
-
-decodeCommit: Decoder Commit
-decodeCommit = map5 Commit (field "id" int) (field "branch" string) (field "committer_name" string) (field "committer_email" string) (field "message" string)
-
+decodeBuild: Decoder Build
+decodeBuild = map4 Build (field "id" int) (field "number" string) (field "state" string) (field "event_type" string)
 
 baseUrl : Maybe String -> String
 baseUrl maybeKey = case maybeKey of
@@ -47,10 +38,10 @@ baseUrl maybeKey = case maybeKey of
   Nothing -> "https://api.travis-ci.org"
 
 
-getBranchBuildStatus : Maybe String -> String -> Http.Request (String, BranchStatus)
+getBranchBuildStatus : Maybe String -> String -> Http.Request (String, List Branch)
 getBranchBuildStatus apiKey repositorySlug =
-  let url = (baseUrl apiKey) ++ "/repos/" ++ repositorySlug ++ "/branches"
-      decoder = map (\result -> (repositorySlug, result)) decodeBranchStatus
+  let url = (baseUrl apiKey) ++ "/repo/" ++ (Http.encodeUri repositorySlug) ++ "/branches"
+      decoder = map (\result -> (repositorySlug, result.branches)) decodeBranchesResponse
   in travisApiGet apiKey decoder url
 
 travisApiGet : Maybe String -> Decoder a -> String -> Http.Request a
@@ -61,7 +52,7 @@ travisApiGet apiKey decoder url =
 
 
 travisHeaders : Maybe String -> List Http.Header
-travisHeaders apiKey = List.append [Http.header "Accept" "application/vnd.travis-ci.2+json"] (getAuthHeaders apiKey)
+travisHeaders apiKey = List.append [Http.header "Travis-API-Version" "3"] (getAuthHeaders apiKey)
 
 
 getAuthHeaders: Maybe String -> List Http.Header
