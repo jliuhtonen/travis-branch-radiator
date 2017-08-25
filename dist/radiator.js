@@ -9029,29 +9029,6 @@ var _elm_lang$http$Http$StringPart = F2(
 	});
 var _elm_lang$http$Http$stringPart = _elm_lang$http$Http$StringPart;
 
-var _elm_lang$trampoline$Trampoline$evaluate = function (trampoline) {
-	evaluate:
-	while (true) {
-		var _p0 = trampoline;
-		if (_p0.ctor === 'Done') {
-			return _p0._0;
-		} else {
-			var _v1 = _p0._0(
-				{ctor: '_Tuple0'});
-			trampoline = _v1;
-			continue evaluate;
-		}
-	}
-};
-var _elm_lang$trampoline$Trampoline$Jump = function (a) {
-	return {ctor: 'Jump', _0: a};
-};
-var _elm_lang$trampoline$Trampoline$jump = _elm_lang$trampoline$Trampoline$Jump;
-var _elm_lang$trampoline$Trampoline$Done = function (a) {
-	return {ctor: 'Done', _0: a};
-};
-var _elm_lang$trampoline$Trampoline$done = _elm_lang$trampoline$Trampoline$Done;
-
 var _user$project$Travis$getAuthHeaders = function (maybeKey) {
 	var _p0 = maybeKey;
 	if (_p0.ctor === 'Just') {
@@ -9212,12 +9189,6 @@ var _user$project$Util$singleton = function (x) {
 		_1: {ctor: '[]'}
 	};
 };
-var _user$project$Util$listFromMaybe = function (m) {
-	return A2(
-		_elm_lang$core$Maybe$withDefault,
-		{ctor: '[]'},
-		A2(_elm_lang$core$Maybe$map, _user$project$Util$singleton, m));
-};
 var _user$project$Util$isJust = function (m) {
 	var _p0 = m;
 	if (_p0.ctor === 'Just') {
@@ -9277,8 +9248,7 @@ var _user$project$Radiator_Update$toRadiatorStatusList = function (_p3) {
 };
 var _user$project$Radiator_Update$refreshModelBuildState = F2(
 	function (newStatus, model) {
-		var newBuildStatuses = _user$project$Radiator_Update$toRadiatorStatusList(
-			A2(_elm_lang$core$Debug$log, 'new status', newStatus));
+		var newBuildStatuses = _user$project$Radiator_Update$toRadiatorStatusList(newStatus);
 		var radiatorStatuses = A2(
 			_elm_lang$core$List$append,
 			newBuildStatuses,
@@ -9349,7 +9319,6 @@ var _user$project$Radiator_Update$update = F2(
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				} else {
-					var foo = A2(_elm_lang$core$Debug$log, 'ERROR', _p7._0._0);
 					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 				}
 			case 'FlipConfigMode':
