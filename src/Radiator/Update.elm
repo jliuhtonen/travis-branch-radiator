@@ -1,5 +1,6 @@
 module Radiator.Update exposing (update, refreshBuilds)
 
+
 import String
 import List
 import Result
@@ -8,9 +9,11 @@ import Http
 import Platform.Cmd exposing (Cmd)
 import Radiator.Ports as Ports
 
+
 import Travis
 import Radiator.Model as Model exposing (..)
 import Util
+
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update action model =
@@ -63,9 +66,11 @@ updateConfig f model =
       updatedModel = { model | configuration = f cfg }
   in (updatedModel, updateConfigurationCmd updatedModel.configuration)
 
+
 updateConfigurationCmd: Model.Configuration -> Cmd Msg
 updateConfigurationCmd config =
   Cmd.batch [Ports.saveConfiguration config, refreshBuilds config]
+
 
 refreshModelBuildState: (String, List Travis.Branch) -> Model -> Model
 refreshModelBuildState newStatus model =

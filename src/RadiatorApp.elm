@@ -1,5 +1,6 @@
 module RadiatorApp exposing (..)
 
+
 import Html
 import Task exposing (Task)
 import Time exposing (..)
@@ -7,8 +8,10 @@ import Radiator.Model as Model
 import Radiator.View as View
 import Radiator.Update as Update
 
+
 refreshInterval: Time 
 refreshInterval= 30 * second
+
 
 defaultConfig = { apiKey = Nothing, repositories =
   ["elm-lang/elm-compiler", "elm-lang/core"] }
@@ -21,9 +24,11 @@ initialConfigPanel config =
     apiKeyValue = Maybe.withDefault "" config.apiKey
   }
 
+
 main : Program { localStorageCfg: Maybe Model.Configuration } Model.Model Model.Msg
 main = 
   Html.programWithFlags { init = initialize, view = View.view, update = Update.update, subscriptions = \_ -> timedUpdate }
+
 
 initialize : { localStorageCfg: Maybe Model.Configuration } -> (Model.Model, Cmd Model.Msg)
 initialize { localStorageCfg } =

@@ -1,5 +1,6 @@
 module Radiator.Model exposing (..)
 
+
 import Travis
 import Http as Http
 
@@ -21,6 +22,7 @@ type alias Model = {
   configPanel: ConfigPanel,
   buildStatus : List RadiatorStatus
 }
+
 
 type alias RadiatorStatus = {
   repository: String,
