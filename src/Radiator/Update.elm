@@ -2,7 +2,6 @@ module Radiator.Update exposing (update, refreshBuilds)
 
 import String
 import List
-import Dict exposing (Dict)
 import Result
 import Task
 import Http
