@@ -9124,7 +9124,7 @@ var _user$project$Travis$getBranchBuildStatus = F2(
 				A2(
 					_elm_lang$core$Basics_ops['++'],
 					_elm_lang$http$Http$encodeUri(repositorySlug),
-					'/branches')));
+					'/branches?exists_on_github=true&sort_by=default_branch,last_build:desc')));
 		return A3(_user$project$Travis$travisApiGet, apiKey, decoder, url);
 	});
 

@@ -40,7 +40,7 @@ baseUrl maybeKey = case maybeKey of
 
 getBranchBuildStatus : Maybe String -> String -> Http.Request (String, List Branch)
 getBranchBuildStatus apiKey repositorySlug =
-  let url = (baseUrl apiKey) ++ "/repo/" ++ (Http.encodeUri repositorySlug) ++ "/branches"
+  let url = (baseUrl apiKey) ++ "/repo/" ++ (Http.encodeUri repositorySlug) ++ "/branches?exists_on_github=true&sort_by=default_branch,last_build:desc"
       decoder = map (\result -> (repositorySlug, result.branches)) decodeBranchesResponse
   in travisApiGet apiKey decoder url
 
