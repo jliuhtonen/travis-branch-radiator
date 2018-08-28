@@ -8,7 +8,13 @@ Travis branch build status radiator/dashboard.
 * Works in the browser, no backend required
 * Saves the configuration in local storage
 * Built with [Elm](http://elm-lang.org/)
+* License: MIT
 
-## License
+## Developing
 
-MIT
+* `npm install`
+* Write code
+* `npm run build`
+* Test code
+* Push to GitHub
+* Plz send pull request
