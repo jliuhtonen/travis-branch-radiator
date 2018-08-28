@@ -1,0 +1,29 @@
+{
+  "name": "travis-branch-radiator",
+  "version": "0.5.1",
+  "description": "Travis Branch Radiator",
+  "private": true,
+  "main": "dist/radiator.js",
+  "scripts": {
+    "compile": "elm make src/RadiatorApp.elm --output dist/radiator.js --optimize",
+    "minify": "uglifyjs dist/radiator.js --compress 'pure_funcs=\"F2,F3,F4,F5,F6,F7,F8,F9,A2,A3,A4,A5,A6,A7,A8,A9\",pure_getters,keep_fargs=false,unsafe_comps,unsafe' | uglifyjs --mangle --output=dist/radiator.js",
+    "build": "npm run compile && npm run minify"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jliuhtonen/travis-branch-radiator.git"
+  },
+  "keywords": [
+    "Travis"
+  ],
+  "author": "Janne Liuhtonen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jliuhtonen/travis-branch-radiator/issues"
+  },
+  "homepage": "https://github.com/jliuhtonen/travis-branch-radiator#readme",
+  "devDependencies": {
+    "elm": "0.19.0-bugfix2",
+    "uglifyjs": "2.4.11"
+  }
+}
