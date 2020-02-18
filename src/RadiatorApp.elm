@@ -16,7 +16,7 @@ refreshInterval =
 defaultConfig =
     { apiKey = Nothing
     , repositories =
-        [ "elm-lang/elm-compiler", "elm-lang/core" ]
+        [ "elm/core", "elm/html" ]
     }
 
 
