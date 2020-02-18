@@ -4,7 +4,6 @@ import Browser
 import Radiator.Model as Model
 import Radiator.Update as Update
 import Radiator.View as View
-import Task exposing (Task)
 import Time exposing (..)
 
 

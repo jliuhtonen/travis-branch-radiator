@@ -2,7 +2,6 @@ module Travis exposing (Branch, BranchesResponse, Build, baseUrl, decodeBranch, 
 
 import Http
 import Json.Decode exposing (..)
-import Task exposing (Task)
 import Url exposing (percentEncode)
 import Url.Builder as UB
 
@@ -57,7 +56,7 @@ getBranchBuildStatus : Maybe String -> String -> Http.Request ( String, List Bra
 getBranchBuildStatus apiKey repositorySlug =
     let
         url =
-            UB.crossOrigin (baseUrl apiKey) ["repo", percentEncode repositorySlug, "branches"] [UB.string "exists_on_github" "true", UB.string "sort_by" "default_branch,last_build:desc"]
+            UB.crossOrigin (baseUrl apiKey) [ "repo", percentEncode repositorySlug, "branches" ] [ UB.string "exists_on_github" "true", UB.string "sort_by" "default_branch,last_build:desc" ]
 
         decoder =
             map (\result -> ( repositorySlug, result.branches )) decodeBranchesResponse

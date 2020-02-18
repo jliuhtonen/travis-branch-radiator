@@ -1,8 +1,5 @@
 module Util exposing (isJust, singleton)
 
-import List
-import Maybe
-
 
 isJust : Maybe a -> Bool
 isJust m =

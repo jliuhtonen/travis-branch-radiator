@@ -121,10 +121,6 @@ apiKeyInput apiKey =
 
 repositoryItem : String -> Html Msg
 repositoryItem repoName =
-    let
-        clickOptions =
-            { preventDefault = True, stopPropagation = False }
-    in
     H.li []
         [ H.span [] [ H.text repoName ]
         , H.a [ E.onClick (RemoveRepository repoName), A.href "#" ] [ H.img [ A.class "remove-repository-icon", A.src "img/close-circular-button.svg" ] [] ]

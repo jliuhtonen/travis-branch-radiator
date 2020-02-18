@@ -5,12 +5,7 @@ import List
 import Platform.Cmd exposing (Cmd)
 import Radiator.Model as Model exposing (..)
 import Radiator.Ports as Ports
-import Result
-import String
-import Task
 import Travis
-import Util
-
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update action model =
