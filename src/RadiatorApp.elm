@@ -12,7 +12,7 @@ refreshInterval : Float
 refreshInterval =
     30 * 1000
 
-
+defaultConfig : Model.Configuration
 defaultConfig =
     { apiKey = Nothing
     , repositories =
